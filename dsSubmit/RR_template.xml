@@ -1,0 +1,70 @@
+<RR_Job_File syntax_version="6.0">
+
+<DeleteXML>0</DeleteXML>
+
+<Job>
+	<SceneName>     %SCENENAME%     </SceneName>
+	<Camera>     %RENDERCAM%     </Camera>
+	<Layer>     %RENDERLAYER%     </Layer>
+	<Software>     Maya     </Software>
+	<Renderer>     %RENDERER%     </Renderer>
+	<Version>     2012.0     </Version>
+	<Tiled>     false     </Tiled>
+	<JobBit>     all     </JobBit>
+	<SendAppBit>     all     </SendAppBit>
+	<RequiredPlugins>     %RENDERER%;     </RequiredPlugins>
+	<SeqStart>     %START%     </SeqStart>
+	<SeqEnd>     %END%     </SeqEnd>
+	<SeqStep>     1     </SeqStep>
+	<SeqFileOffset>     0     </SeqFileOffset>
+	<ImageWidth>     1280     </ImageWidth>
+	<ImageHeight>     720     </ImageHeight>
+	<ImageMultiType>     0     </ImageMultiType>
+	<ImageMulti>     0     </ImageMulti>
+	<ImageFilename>     /%FRAMENAME%     </ImageFilename>
+	<ImageFileNameVariables>     /%FRAMENAME%    </ImageFileNameVariables>
+	<ImageDir>     %IMAGEDIR%     </ImageDir>
+	<ImageFramePadding>     4     </ImageFramePadding>
+	<ImageSingleOutputFile>     false     </ImageSingleOutputFile>
+	<OverrideImageFormat>          </OverrideImageFormat>
+	<ImageExtension>     .%EXTENSION%     </ImageExtension>
+	<SceneOS>     linux     </SceneOS>
+	<OS_Path_Format>     linux     </OS_Path_Format>
+	<ChannelFilename>     %FRAMENAME%     </ChannelFilename>
+	<ChannelExtension>     .%EXTENSION%     </ChannelExtension>
+	<UserName>     %USERNAME%     </UserName>
+	<CompanyProjectName>     %PROJECTNAME%     </CompanyProjectName>
+	<SeqDivMin>     %SEQDIVMIN%     </SeqDivMin>
+	<SeqDivMax>     %SEQDIVMAX%    </SeqDivMax>
+	<SeqDivideEnabled>     true     </SeqDivideEnabled>
+	<MaxClientsAtATime>     999     </MaxClientsAtATime>
+	<disabled>     false     </disabled>
+	<verboseLevel>     0     </verboseLevel>
+	<renderQuality>     0     </renderQuality>
+	<Priority>     %PRIORITY%     </Priority>
+	<numberOfPreviewFrames>     6     </numberOfPreviewFrames>
+	<RRO_AbortJobswithLowerPriority>     false     </RRO_AbortJobswithLowerPriority>
+	<RRO_IgnoreCrashes>     false     </RRO_IgnoreCrashes>
+	<RRO_AutoApproveJob> %APPROVE% </RRO_AutoApproveJob>
+	<RRO_Unused>     false     </RRO_Unused>
+	<RRO_SendSMS>     false     </RRO_SendSMS>
+	<RRO_RenderPreviewFirst>     true     </RRO_RenderPreviewFirst>
+	<RRO_DoNotShowPreviewJpegs>     false     </RRO_DoNotShowPreviewJpegs>
+	<RRO_DoNotCheckForFrames>     false     </RRO_DoNotCheckForFrames>
+	<RRO_LittleJob>     false     </RRO_LittleJob>
+	<RRO_StartMultipleInstances>     false     </RRO_StartMultipleInstances>
+	<RRO_LeftFree>     false     </RRO_LeftFree>
+	<RRO_AllowtoDeleteCrashedFrames>     true     </RRO_AllowtoDeleteCrashedFrames>
+	<RRO_AllowLocalSceneCopy>     true     </RRO_AllowLocalSceneCopy>
+	<RRO_AllowTextureReplacement>     true     </RRO_AllowTextureReplacement>
+	<RRO_AllowLocalRenderOut>     true     </RRO_AllowLocalRenderOut>
+	<RRO_PreviewGamma2.2>     True     </RRO_PreviewGamma2.2>
+	<PrePostCommand>     PPAssembleTiles ~ 100 ~ 100 ~ 1 ~ 0   </PrePostCommand>
+	<PrePostCommand>     PPSequenceCheck ~ 0 ~ 0 ~ 1 ~ 0   </PrePostCommand>
+	<PrePostCommand> 	 PPEXRCropchannels ~ 100 ~ 100 ~ 1 ~ 0   </PrePostCommand>
+
+<!-- Clients can be assigned by a list of booleans or bye group name -->
+	<Clients>     Maya2010     </Clients>
+</Job>
+
+</RR_Job_File>

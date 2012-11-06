@@ -1,0 +1,72 @@
+import maya.cmds as cmds
+import maya.mel as mel
+import random,os,re
+
+def dsPartition(sParticle,partitions,start,end):
+    path = '/media/fat/bus/PRT/'
+    newPath = path + sParticle
+    if not os.path.isdir(newPath):
+        os.makedirs(newPath)
+    x = 1
+    PRTList = []
+    while x <= partitions:
+        cmds.setAttr(sParticle + ".seed[:0]", int(random.randint(x,1000)))
+        PRTPath = prtExport(newPath,sParticle,start,end,x) 
+        PRTList.append(PRTPath)
+        x = x + 1
+
+    node = cPRTLoader(sParticle)
+    y = 1
+    for path in PRTList:
+        PRTLoaderAdd(path,node,y)
+        y = y + 1
+        
+def PRTLoaderAdd(PRTPath,node,x):
+    cmds.setAttr(node + '.inInputFiles[' + str(x-1) + '].inPRTFile',PRTPath,type="string")
+    cmds.setAttr(node + '.inInputFiles[' + str(x-1) + '].inSingleFileOnly',0)
+     
+
+def prtExport(newPath,sParticle,start,end,x): 
+    pad = "%04d" %start
+    PRTPath = newPath + '/' + sParticle + '_' + str(x) + '_' + str(pad) + '.prt'
+    while start <= end:
+        cmds.select(sParticle)
+        cmds.currentTime(start)
+        pad = "%04d" %start
+        PRTPath = newPath + '/' + sParticle + '_' + str(x) + '_' + str(pad) + '.prt'
+        mel.eval('string $channelInfo[] = { "rgb", "float16[3]", "velocity", "float16[3]", "opacity", "float32", "particleId", "uint32", "position", "float32[3]" };')
+        mel.eval('PRTExporter("'+PRTPath+'","'+sParticle+'",$channelInfo);')
+        #mel.eval('KrakatoaRender()')
+        start = start + 1
+    return PRTPath
+
+def cPRTLoader(name):
+    transformNode = cmds.createNode( 'transform', name=name+'_PRTLoader' )
+    prtLoaderNode = cmds.createNode( 'PRTLoader', name=name+'_PRTtransform', parent=transformNode )
+    cmds.connectAttr( 'time1.outTime', prtLoaderNode + '.inTime' )
+    cmds.setAttr(name+'_PRTtransform' + '.inRenderLoadMode',1)
+    cmds.setAttr(name+'_PRTtransform' + '.inKeepVelocityChannel',1)
+    return name+'_PRTtransform'
+        
+dsPartition('nParticle1',2,1,100)
+
+
+import maya.cmds as cmds
+import maya.mel as mel
+import random,os,re
+
+def dsPartition(,start,end):
+    objList = cmds.ls(selection=True)
+    for obj in objList:
+        objShape = cmds.listRelatives( obj, shapes=True )
+        sParticle =  objShape[0]
+    
+    
+        y = start
+        x = end
+        while y <= x:
+            cmds.currentTime(y)
+            mel.eval('partioExport -mnf '+str(y)+' -mxf '+str(y)+' -f PDC -atr position -atr id  -atr velocity -p "D:\\teat" '+sParticle+';')
+            y = y + 1
+        
+dsPartition(1,100)

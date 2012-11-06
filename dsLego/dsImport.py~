@@ -1,0 +1,63 @@
+import os
+import maya.cmds as cmds
+
+def render_elements():
+    '''
+    Imports RenderElements.mb
+    '''
+    import_scene('/dsGlobal/dsCore/maya/dsLego/presets/renderElements/renderElements.mb')
+    
+def daylight_setup():
+    '''
+    Imports SunnyDay_LightSetup.ma
+    '''
+    import_scene('/dsGlobal/dsCore/maya/dsLego/presets/lightSetup/sunnyDay_LightSetup.ma')
+
+def import_scene(scene):
+    '''
+    Imports Scene and stores the imported scene into an environment variable.
+    '''
+    dir, file = os.path.split(scene)
+    name, ext = os.path.splitext(file)
+    env = name.upper()
+    if not test_env(env):
+        nodes = cmds.file(str(scene), i=True, preserveReferences=True, returnNewNodes=True)
+        set_imported_obj(nodes, env)
+    else:
+        remove_imported_obj(env)
+        nodes = cmds.file(str(scene), i=True, preserveReferences=True, returnNewNodes=True)
+        set_imported_obj(nodes, env)
+        
+def remove_imported_obj(env):
+    '''
+    Removes objects from a given environment.
+    '''
+    for obj in os.environ[env].split(';'):
+        if cmds.nodeType(obj) == 'reference':
+            cmds.file(cmds.referenceQuery( obj,filename=True ), removeReference=True)
+        else:
+            try:
+                if cmds.objExists(obj):
+                    cmds.delete(obj)
+                else:
+                    print 'Object doesnt exists', obj
+            except:
+                print 'Couldnt remove', obj, cmds.nodeType(obj)
+
+def set_imported_obj(list, env):
+    '''
+    Add items from list into the given environment
+    '''
+    if list:
+        os.environ[env] = list[0]
+        if list[1]:
+            for obj in list[1:]:
+                #print 'Adding', obj, 'to Environment...'
+                os.environ[env] = '%s;%s' % (os.environ[env], obj)
+
+def test_env(env):
+    try:
+        print 'Testing Environment...', env, os.environ[env]
+        return True
+    except:
+        return False
