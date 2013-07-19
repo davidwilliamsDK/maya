@@ -50,11 +50,8 @@ def versionCheck():
     
     rootTaskPath = fullPath.replace(fileName,"")
     
-    print rootTaskPath
-    
-    print rootTaskPath + "version/" + fileName
-    
-    
+    #print rootTaskPath
+    #print rootTaskPath + "version/" + fileName
 
 def initMDNode():
     if cmds.ls("dsMetaData"):
