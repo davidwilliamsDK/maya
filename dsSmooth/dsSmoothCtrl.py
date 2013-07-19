@@ -100,20 +100,24 @@ class dsSmoothCtrl(form_class, base_class):
         rendertime = self.rendertime_checkBox.checkState()
         if not rendertime == 2:
             for asset in self.label:
-                if cmds.objExists("%s:Rig_Grp.smooth" % asset.text()):
-                    smoothedMesh = []
-                    smoothNode = cmds.listConnections("%s:Rig_Grp.smooth" % asset.text(), s=False, d=True, type="polySmoothFace")
-                    if smoothNode:
-                        for node in smoothNode:
-                            meshSmoothed = cmds.listConnections("%s.output" % node, s=False, d=True, type="mesh")[0]
-                            smoothedMesh.append(meshSmoothed)
+                index = self.label.index(asset)
+                val = self.spinbox[index].value()
 
-                    mesh = cmds.ls("%s:mesh_*" % asset.text(), l=True, type="transform")
-                    for m in mesh:
-                        if cmds.objectType(m, isType='transform') == 1:
-                            if not m.rsplit("|",1)[-1] in smoothedMesh:
-                                smoothNode = cmds.polySmooth(m)[0]
-                                cmds.connectAttr("%s:Rig_Grp.smooth" % asset.text(), "%s.divisions" % smoothNode )
+                if not val == 0:
+                    if cmds.objExists("%s:Rig_Grp.smooth" % asset.text()):
+                        smoothedMesh = []
+                        smoothNode = cmds.listConnections("%s:Rig_Grp.smooth" % asset.text(), s=False, d=True, type="polySmoothFace")
+                        if smoothNode:
+                            for node in smoothNode:
+                                meshSmoothed = cmds.listConnections("%s.output" % node, s=False, d=True, type="mesh")[0]
+                                smoothedMesh.append(meshSmoothed)
+
+                        mesh = cmds.ls("%s:mesh_*" % asset.text(), l=True, type="transform")
+                        for m in mesh:
+                            if cmds.objectType(m, isType='transform') == 1:
+                                if not m.rsplit("|",1)[-1] in smoothedMesh:
+                                    smoothNode = cmds.polySmooth(m, mth=0, bnr=1, c=1, kb=1, ksb=1, kt=1, kmb=1, suv=1, peh=1, sl=1, ps=0.1, ro=1, ch=1)[0]
+                                    cmds.connectAttr("%s:Rig_Grp.smooth" % asset.text(), "%s.divisions" % smoothNode )
 
     def createSliders(self):
         assets = self.listAssets()

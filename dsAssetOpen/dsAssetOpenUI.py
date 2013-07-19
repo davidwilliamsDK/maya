@@ -23,6 +23,8 @@ class Ui_AssetWindow(object):
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+
+        #Production Combobox
         self.productionLabel = QtGui.QLabel(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -96,9 +98,38 @@ class Ui_AssetWindow(object):
         self.assetSubTypeComboBox.setObjectName(_fromUtf8("assetSubTypeComboBox"))
         self.gridLayout.addWidget(self.assetSubTypeComboBox, 6, 0, 1, 3)
 
-        spacerItem = QtGui.QSpacerItem(20, 14, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 7, 1, 1, 1)
+        #Film Combobox
+        self.filmLabel = QtGui.QLabel(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.filmLabel.sizePolicy().hasHeightForWidth())
+        self.filmLabel.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setWeight(75)
+        font.setBold(True)
+        self.filmLabel.setFont(font)
+        self.filmLabel.setObjectName(_fromUtf8("filmLabel"))
+        self.gridLayout.addWidget(self.filmLabel, 7, 0, 1, 2)
 
+        self.filmList = QtGui.QComboBox(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.filmList.sizePolicy().hasHeightForWidth())
+        self.filmList.setSizePolicy(sizePolicy)
+        self.filmList.setMinimumSize(QtCore.QSize(201, 22))
+        self.filmList.setMaximumSize(QtCore.QSize(201, 22))
+        self.filmList.setEditable(False)
+        self.filmList.setObjectName(_fromUtf8("filmList"))
+        self.gridLayout.addWidget(self.filmList, 8, 0, 1, 3)
+
+        #Add Spacer
+        spacerItem = QtGui.QSpacerItem(20, 14, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 9, 1, 1, 1)
+
+        #Shotgun Templates
         self.shogunTemplateLabel = QtGui.QLabel(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -111,7 +142,7 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.shogunTemplateLabel.setFont(font)
         self.shogunTemplateLabel.setObjectName(_fromUtf8("shogunTemplateLabel"))
-        self.gridLayout.addWidget(self.shogunTemplateLabel, 8, 0, 1, 2)
+        self.gridLayout.addWidget(self.shogunTemplateLabel, 10, 0, 1, 2)
 
         self.shotgunTemplateComboBox = QtGui.QComboBox(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -123,10 +154,13 @@ class Ui_AssetWindow(object):
         self.shotgunTemplateComboBox.setMaximumSize(QtCore.QSize(201, 22))
         self.shotgunTemplateComboBox.setEditable(False)
         self.shotgunTemplateComboBox.setObjectName(_fromUtf8("shotgunTemplateComboBox"))
-        self.gridLayout.addWidget(self.shotgunTemplateComboBox, 10, 0, 1, 3)
+        self.gridLayout.addWidget(self.shotgunTemplateComboBox, 11, 0, 1, 3)
 
+        #Add Spacer
         spacerItem1 = QtGui.QSpacerItem(20, 15, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem1, 10, 1, 1, 1)
+        self.gridLayout.addItem(spacerItem1, 13, 1, 1, 1)
+
+        #AssetName
         self.splitterA = QtGui.QFrame(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -138,9 +172,13 @@ class Ui_AssetWindow(object):
         self.splitterA.setFrameShape(QtGui.QFrame.HLine)
         self.splitterA.setFrameShadow(QtGui.QFrame.Sunken)
         self.splitterA.setObjectName(_fromUtf8("splitterA"))
-        self.gridLayout.addWidget(self.splitterA, 11, 0, 2, 3)
+        self.gridLayout.addWidget(self.splitterA, 14, 0, 2, 3)
+
+        #Add Spacer
         spacerItem2 = QtGui.QSpacerItem(20, 14, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem2, 12, 1, 1, 1)
+        self.gridLayout.addItem(spacerItem2, 15, 1, 1, 1)
+
+        #Create Asset
         self.assetNameLabel = QtGui.QLabel(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -153,13 +191,17 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.assetNameLabel.setFont(font)
         self.assetNameLabel.setObjectName(_fromUtf8("assetNameLabel"))
-        self.gridLayout.addWidget(self.assetNameLabel, 13, 0, 1, 2)
+        self.gridLayout.addWidget(self.assetNameLabel, 16, 0, 1, 2)
         self.assetNameTextEdit = QtGui.QLineEdit(self.centralwidget)
         self.assetNameTextEdit.setMaximumSize(QtCore.QSize(201, 22))
         self.assetNameTextEdit.setObjectName(_fromUtf8("assetNameTextEdit"))
-        self.gridLayout.addWidget(self.assetNameTextEdit, 14, 0, 1, 3)
+        self.gridLayout.addWidget(self.assetNameTextEdit, 17, 0, 1, 3)
+
+        #Add Spacer
         spacerItem3 = QtGui.QSpacerItem(20, 15, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem3, 15, 1, 1, 1)
+        self.gridLayout.addItem(spacerItem3, 18, 1, 1, 1)
+
+        #CreatePushBar
         self.createPushButton = QtGui.QPushButton(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -173,7 +215,9 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.createPushButton.setFont(font)
         self.createPushButton.setObjectName(_fromUtf8("createPushButton"))
-        self.gridLayout.addWidget(self.createPushButton, 16, 0, 1, 3)
+        self.gridLayout.addWidget(self.createPushButton, 19, 0, 1, 3)
+
+        #Create MinifigOushBar
         self.createMinifigPushButton = QtGui.QPushButton(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -187,7 +231,9 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.createMinifigPushButton.setFont(font)
         self.createMinifigPushButton.setObjectName(_fromUtf8("createMinifigPushButton"))
-        self.gridLayout.addWidget(self.createMinifigPushButton, 17, 0, 1, 3)
+        self.gridLayout.addWidget(self.createMinifigPushButton, 20, 0, 1, 3)
+
+        #Create Splitter
         self.splitterB = QtGui.QFrame(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -199,7 +245,9 @@ class Ui_AssetWindow(object):
         self.splitterB.setFrameShape(QtGui.QFrame.HLine)
         self.splitterB.setFrameShadow(QtGui.QFrame.Sunken)
         self.splitterB.setObjectName(_fromUtf8("splitterB"))
-        self.gridLayout.addWidget(self.splitterB, 18, 0, 2, 3)
+        self.gridLayout.addWidget(self.splitterB, 21, 0, 2, 3)
+
+        #Create Icon Button
         self.createIcon = QtGui.QPushButton(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -213,7 +261,7 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.createIcon.setFont(font)
         self.createIcon.setObjectName(_fromUtf8("createIcon"))
-        self.gridLayout.addWidget(self.createIcon, 19, 0, 1, 2)
+        self.gridLayout.addWidget(self.createIcon, 22, 0, 1, 2)
 
         self.exportPart = QtGui.QPushButton(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -228,7 +276,7 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.exportPart.setFont(font)
         self.exportPart.setObjectName(_fromUtf8("exportPart"))
-        self.gridLayout.addWidget(self.exportPart, 20, 0, 1, 2)
+        self.gridLayout.addWidget(self.exportPart, 23, 0, 1, 2)
 
         self.incrPushButton = QtGui.QPushButton(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -243,7 +291,7 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.incrPushButton.setFont(font)
         self.incrPushButton.setObjectName(_fromUtf8("incrPushButton"))
-        self.gridLayout.addWidget(self.incrPushButton, 21, 0, 1, 3)
+        self.gridLayout.addWidget(self.incrPushButton, 24, 0, 1, 3)
 
         self.removePushButton = QtGui.QPushButton(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -258,11 +306,16 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.removePushButton.setFont(font)
         self.removePushButton.setObjectName(_fromUtf8("removePushButton"))
-        self.gridLayout.addWidget(self.removePushButton, 22, 0, 1, 3)
+        self.gridLayout.addWidget(self.removePushButton, 25, 0, 1, 3)
+
+        #Add Spacer
         spacerItem4 = QtGui.QSpacerItem(20, 17, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem4, 23, 0, 1, 1)
+        self.gridLayout.addItem(spacerItem4, 26, 0, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
         self.loadAssetgridLayout = QtGui.QGridLayout()
+
+        #RightSide of GUI
+        #Load Asset
         self.loadAssetgridLayout.setObjectName(_fromUtf8("loadAssetgridLayout"))
         self.loadAssetLabel = QtGui.QLabel(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -402,6 +455,7 @@ class Ui_AssetWindow(object):
         self.productionLabel.setText(QtGui.QApplication.translate("AssetWindow", "Production", None, QtGui.QApplication.UnicodeUTF8))
         self.assetTypeLabel.setText(QtGui.QApplication.translate("AssetWindow", "Asset Type", None, QtGui.QApplication.UnicodeUTF8))
         self.assetSubTypeLabel.setText(QtGui.QApplication.translate("AssetWindow", "Asset SubType", None, QtGui.QApplication.UnicodeUTF8))
+        self.filmLabel.setText(QtGui.QApplication.translate("AssetWindow", "Link to Film", None, QtGui.QApplication.UnicodeUTF8))
         self.shogunTemplateLabel.setText(QtGui.QApplication.translate("AssetWindow", "Set Shogun Template", None, QtGui.QApplication.UnicodeUTF8))
         self.assetNameLabel.setText(QtGui.QApplication.translate("AssetWindow", "Asset Name", None, QtGui.QApplication.UnicodeUTF8))
         self.createPushButton.setText(QtGui.QApplication.translate("AssetWindow", "Create Asset", None, QtGui.QApplication.UnicodeUTF8))

@@ -1,4 +1,5 @@
 #Import python modules
+print "before anything"
 import sys, os, re, shutil, random, sip, platform
 import subprocess
 import getpass
@@ -6,6 +7,7 @@ from PyQt4 import QtCore, QtGui
 #import maya.app.general.createImageFormats as createImageFormats
 
 #Import GUI
+print "before QT"
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
@@ -53,6 +55,7 @@ class MyForm(QtGui.QMainWindow):
 
         #For action, run def
         QtCore.QObject.connect(self.ui.productionComboBox, QtCore.SIGNAL("activated(int)"), self.assetTypeUpdate);
+        QtCore.QObject.connect(self.ui.productionComboBox, QtCore.SIGNAL("activated(int)"), self.updateFilmComboBox);
         QtCore.QObject.connect(self.ui.productionComboBox, QtCore.SIGNAL("activated(int)"), self.minifigProduction);
         QtCore.QObject.connect(self.ui.assetTypeComboBox, QtCore.SIGNAL("activated(int)"), self.updateAssetSubTypeComboBox);
         QtCore.QObject.connect(self.ui.assetSubTypeComboBox, QtCore.SIGNAL("activated(int)"), self.assetListUpdate);
@@ -73,12 +76,14 @@ class MyForm(QtGui.QMainWindow):
         self.ui.actionExit.triggered.connect(self.closeEvent)
         self.ui.actionExit.triggered.connect(self.exitWidget)
 
+        print "shotgun"
         #Shotgun
         self.ui.actionReloadTemplates.triggered.connect(self.listTemplates)
         self.ui.reloadAssetStatus.triggered.connect(self.reloadAssetStatus)
         self.ui.actionImportMinifig.triggered.connect(self.importMinifig)
 
         #Init Widgets
+        print "comboBox"
         self.updateProjectComboBox()
 
         #Set Context Menu for list widget
@@ -94,6 +99,8 @@ class MyForm(QtGui.QMainWindow):
         self.assetSubTypeState = ""
         self.asset = ""
         self.setTemplateState = ""
+
+        self.filmState = "No Episodes for this Project"
 
         self.templateSettings = False
         self.loadedTemplates = []
@@ -268,13 +275,15 @@ class MyForm(QtGui.QMainWindow):
         '''This Def list all project in the project dir, with a config.xml file in the root'''
         self.ui.productionComboBox.clear()
         projects = dsProjectUtil.listProjects()
+        print projects
         i = 0
         if projects:
             for project in projects:
                 self.ui.productionComboBox.addItem("")
                 self.ui.productionComboBox.setItemText(i, QtGui.QApplication.translate("MainWindow", project, None, QtGui.QApplication.UnicodeUTF8))
                 i = i+1
-        self.assetTypeUpdate()
+        #self.assetTypeUpdate()
+        #self.updateFilmComboBox()
 
     def assetTypeUpdate(self):
         self.ui.assetTypeComboBox.clear()
@@ -300,6 +309,25 @@ class MyForm(QtGui.QMainWindow):
             self.ui.assetSubTypeComboBox.setItemText(i, QtGui.QApplication.translate("MainWindow", assetSubType, None, QtGui.QApplication.UnicodeUTF8))
             i = i+1
         self.assetListUpdate()
+
+    def updateFilmComboBox(self):
+        '''List all active films for selected project'''
+        print "------------------------------------------------------------------------***************"
+        try:
+            self.ui.filmList.clear()
+            project = self.ui.productionComboBox.currentText()
+            episodes = dsProjectUtil.listEpisodes(project)
+            print episodes
+
+            i=0
+            for episode in episodes:
+                self.ui.filmList.addItem("")
+                self.ui.filmList.setItemText(i, QtGui.QApplication.translate("MainWindow", episode, None, QtGui.QApplication.UnicodeUTF8))
+                i = i+1
+        except:
+            self.ui.filmList.addItem("")
+            self.ui.filmList.setItemText(0, QtGui.QApplication.translate("MainWindow", self.filmState, None, QtGui.QApplication.UnicodeUTF8))
+            print "No Episodes"
 
     def assetListUpdate(self):
         self.iconUpdate()
@@ -472,6 +500,7 @@ class MyForm(QtGui.QMainWindow):
             project = self.ui.productionComboBox.currentText()
             assetType = self.ui.assetTypeComboBox.currentText()
             assetSubType = self.ui.assetSubTypeComboBox.currentText()
+            film = self.ui.filmList.currentText()
             shotgunTemplate = str(self.ui.shotgunTemplateComboBox.currentText()).rsplit(" ", 1)[0]
 
             path = dsProjectUtil.listAssets(project, assetType, assetSubType)
@@ -505,10 +534,12 @@ class MyForm(QtGui.QMainWindow):
         MyForm.assetListUpdate(self)
         self.ui.statusbar.showMessage("Asset created:  " + assetName)
 
+        print film
         list = [["Asset", "sg_asset_type", assetType],["Asset", "sg_subtype", assetSubType]]
         sgBridge.addTypesToList(list)
         assetID = sgBridge.sgCreateAsset(project, assetName, assetType, assetSubType)
         sgBridge.setTemplate(assetID, shotgunTemplate)
+        sgBridge.setEpisode(assetID, film)
 
 
         self.ui.assetNameTextEdit.clear()
@@ -852,6 +883,7 @@ class MyForm(QtGui.QMainWindow):
         if not self.ui.productionComboBox.findText(self.productionState) == -1:
             self.ui.productionComboBox.setCurrentIndex(self.ui.productionComboBox.findText(self.productionState))
             MyForm.assetTypeUpdate(self)
+            MyForm.updateFilmComboBox(self)
 
         self.assetTypeState = settings.value("assetTypeState").toString()
         if not self.ui.assetTypeComboBox.findText(self.assetTypeState) == -1:

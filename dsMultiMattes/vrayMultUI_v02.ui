@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>340</width>
+    <height>618</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DS ID Creator</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="label_header">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>311</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>Vray Multimatte Creator</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_allShaders">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>321</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Apply ID to all objects in the scene</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_ID">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>320</y>
+      <width>311</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Apply ID's</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_multimmattes">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>510</y>
+      <width>310</width>
+      <height>49</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Setup Multi Mattes for Vray</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_multimattesForID">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>251</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Create Multimattes for ID's</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_startIndex">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>290</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Start Index/ID Number</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_endIndex">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>480</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>End Index</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_multimatteName">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>260</y>
+      <width>171</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_matteName">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>260</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Matte Name</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_override">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>140</y>
+      <width>251</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Create layer override for ID's</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_singleID">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>170</y>
+      <width>251</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Apply Single ID's</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_multiForAllID">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>440</y>
+      <width>251</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Create Multi Mattes for all ID's in Scene</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_linkedAssetID">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>370</y>
+      <width>311</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Apply ID to selected Ref'ed Asset</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_disableElements">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>230</y>
+      <width>301</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Disable Other Render Elements for Renderlayer</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_createRenderlayer">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>200</y>
+      <width>291</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Create Renderlayer (For Linked Assets Only)</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioButton_objectID">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Use Object ID</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioButton_multiID">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>50</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Use Multimatte ID</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>340</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionID_Setup_Help"/>
+   </widget>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionID_Setup_Help">
+   <property name="text">
+    <string>ID Setup Help</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

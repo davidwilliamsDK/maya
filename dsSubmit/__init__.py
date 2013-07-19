@@ -60,7 +60,6 @@ class Window(base_class, form_class):
             self.home = os.getenv("HOME")
             self.dsPipe = '/dsPipe'
             self.dsComp = '/dsComp'
-            self.dsDev = '/dsDev'
             self.dsGlobal = '/dsGlobal'
             self.config_dir = '%s/.submit' % (self.home)
             self.config_path = '%s/config.ini' % (self.config_dir)
@@ -69,7 +68,6 @@ class Window(base_class, form_class):
             self.home = 'C:%s' % os.getenv("HOMEPATH")
             self.dsPipe = '//vfx-data-server/dsPipe'
             self.dsComp = '//xserv2.duckling.dk/dsComp'
-            self.dsDev = '//vfx-data-server/dsDev'
             self.dsGlobal = '//vfx-data-server/dsGlobal'
             self.config_dir = '%s/.submit' % (self.home)
             self.config_path = '%s/config.ini' % (self.config_dir)
@@ -85,94 +83,19 @@ class Window(base_class, form_class):
         self.YesButton.clicked.connect(self.submitRR)
         
         self.rlRender = {}
-        #self.renderBox.activated.connect(self.setRenderer)
-        #self.rlList.itemClicked.connect(self.refreshRenderer)
+
+        #self.actionGI_RL.triggered.connect(self.setupGICache)
         
-        self.ExplorerButton.clicked.connect(self.explorer)
-        self.ControlButton.clicked.connect(self.rrControl)
-        self.actionGI_RL.triggered.connect(self.setupGICache)
+        self.connect(self.actionWIKI,QtCore.SIGNAL('triggered()'), lambda item=[]: self.webBrowser())
+        self.connect(self.actionExplorer,QtCore.SIGNAL('triggered()'), lambda item=[]: self.explorer())
+        self.connect(self.actionrrControl,QtCore.SIGNAL('triggered()'), lambda item=[]: self.rrControl())
         
         print 'Loading config file from:', self.config_path
         self.load_config()
 
-    def load_config(self):
-        '''
-        Load config which is a dictionary and applying setting.
-        '''
-        if os.path.exists(self.config_path):
-            config_file = open( '%s' % self.config_path, 'r')
-            list = config_file.readlines()
-            config_file.close()
-            
-            config = {}
-            for option in list:
-                key, value = option.split('=')
-                config[key] = value.strip()
-                
-            #print config
-            
-            if config.has_key('SHOT'):
-                items = [self.shList.item(i) for i in range(self.shList.count()) if str(self.shList.item(i).text()) in config.get('SHOT')]
-                
-                for item in items:
-                    item.setSelected(True) 
-                    self.shList.setCurrentItem(item)
-                
-            if config.has_key('RENDERLAYER'):
-                items = [self.rlList.item(i) for i in range(self.rlList.count()) if str(self.rlList.item(i).text()) in config.get('RENDERLAYER')]
-                for item in items: 
-                    item.setSelected(True)
-                    self.rlList.setCurrentItem(item)
-            
-            if config.has_key('USERNAME'): self.UserText.setText(str(config.get('USERNAME')))
-            if config.has_key('MINSEQDIV'): self.minSeqDivInput.setText(str(config.get('MINSEQDIV')))
-            if config.has_key('MAXSEQDIV'): self.maxSeqDivInput.setText(str(config.get('MAXSEQDIV')))
-            
-            if config.has_key('SAVEFILE'): 
-                self.saveFileCheck.setChecked(int(config.get('SAVEFILE')))
-            
-            if config.has_key('DELETEFRAMES'): self.DeleteFramesCheck.setChecked(int(config.get('DELETEFRAMES')))
-            
-            if config.has_key('APPROVE'): self.ApproveCheck.setChecked(int(config.get('APPROVE')))
-
-            if config.has_key('USEGI'): self.GICheck.setChecked(int(config.get('USEGI')))
-            
-            if config.has_key('PRIOTY'):
-                index = [i for i in range(self.priotyCombo.count()) if self.priotyCombo.itemText(i) == config.get('PRIOTY')][0]
-                self.priotyCombo.setCurrentIndex(index)
-            
-    def save_config(self):
-        '''
-        Save setting to the config file as a dictionary.
-        '''
-        shot = [str(item.text()) for item in self.shList.selectedItems()] 
-        rl = [str(item.text()) for item in self.rlList.selectedItems()]
-        
-        if not os.path.exists(self.config_dir):
-            os.mkdir(self.config_dir)
-
-        config = open( '%s' % self.config_path, 'w')
-        config.write('USERNAME=%s\n'% (self.UserText.text()))
-        config.write('SHOT=%s\n' % (shot))
-        config.write('RENDERLAYER=%s\n' % (rl))
-        config.write('SAVEFILE=%s\n' % (self.saveFileCheck.checkState()))
-        config.write('DELETEFRAMES=%s\n' % (self.DeleteFramesCheck.checkState()))
-        config.write('APPROVE=%s\n' % (self.ApproveCheck.checkState()))
-        config.write('USEGI=%s\n' % (self.GICheck.checkState()))
-        config.write('PRIOTY=%s\n' % (str(self.priotyCombo.currentText())))
-        config.write('MINSEQDIV=%s\n'% (self.minSeqDivInput.text()))
-        config.write('MAXSEQDIV=%s\n'% (self.maxSeqDivInput.text()))
-        config.close()
-        
-        self.load_config()
-        return self.config_path
-    
     def checkPath(self, path):
         if not os.path.exists(path):
             os.makedirs(path)
-        else:
-            #print 'Could not make %s ' % path
-            pass
         
     def setupGICache(self):
         print "setupGI"
@@ -211,7 +134,7 @@ class Window(base_class, form_class):
             self.refresh()
             
     def explorer(self):
-        path = self.findLayerPath()
+        path = '%s/%s/film/%s/%s' % (self.dsPipe, self.project, self.episode, self.sequence)
         if os.path.isdir(path):
             if sys.platform == "linux2":
                 cmd = "gnome-open " + str(path)
@@ -223,20 +146,14 @@ class Window(base_class, form_class):
         if sys.platform == "linux2":
             cmd = '/mnt/rrender/lx__rrControl.sh'
         if sys.platform == "win32":
-            cmd = r"\\vfx-render-manager\royalrender\bin\win\rrControl.exe"
+#             cmd = r"\\vfx-render-manager\royalrender\bin\win\rrControl.exe"
+            cmd = r"\\vfx-render-server\royalrender\bin\win\rrControl.exe"
         self.process(cmd)
         
     def refreshRenderer(self):
         rl = str(self.rlList.currentItem().text())
         if self.rlRender.has_key(rl):
             self.renderBox.setCurrentIndex(self.rlRender[rl][0])
-            
-    def setRenderer(self):
-        renderer = self.renderBox.currentText()
-        if renderer:
-            for rl in self.rlList.selectedItems():
-                self.rlRender[str(rl.text())] = (self.renderBox.currentIndex(), self.renderBox.currentText())
-
         
     def setGlobals(self):
         
@@ -248,37 +165,31 @@ class Window(base_class, form_class):
         match = re.search('(?P<project>\w*)\/film\/(?P<episode>\w*)\/(?P<sequence>\w*)\/(?P<shot>\w*)', self.filePath)
         
         if match:
-            
             match = match.groupdict()
-            
-            if project != 'None': self.project = project
+            if project != 'None':
+                self.project = project
             else:
-                if match: self.project = match['project']
-                else:
-                    self.error('self.project wasnt set.')
+                if match:
+                    self.project = match['project']
     
-            if episode != 'None': self.episode = episode
+            if episode != 'None':
+                self.episode = episode
             else:
-                if match: self.episode = match['episode']
-                else:
-                    self.error('self.episode wasnt set.')
+                if match:
+                    self.episode = match['episode']
     
-            if sequence != 'None': self.sequence = sequence
+            if sequence != 'None':
+                self.sequence = sequence
             else:
-                if match: self.sequence = match['sequence']
-                else:
-                    self.error('self.sequence wasnt set.')
+                if match: 
+                    self.sequence = match['sequence']
     
-            
-            if shot != 'None': self.shot = shot
+            if shot != 'None':
+                self.shot = shot
             else:
-                if match: self.shot = match['shot']
-                else:
-                    self.error('self.shot wasnt set.')
-        else:
-            self.error('Please make sure to save your file in the right location.')
+                if match: 
+                    self.shot = match['shot']
 
-        
     def refresh(self):
         self.shList.clear()
         self.rlList.clear()
@@ -370,58 +281,6 @@ class Window(base_class, form_class):
         cmds.setAttr("defaultResolution.width", xrez)
         cmds.setAttr("defaultResolution.height",yrez)
         
-
-
-    def submitRR(self):
-        self.closePopup()
-        selection = self.getSelected()
-        minSeq =str(int(self.minSeqDivInput.text()))
-        maxSeq = str(int(self.maxSeqDivInput.text()))
-        if self.saveFileCheck.isChecked():
-            self.mayaSave()
-        
-        if self.UserText.text() == "":
-            dsUserName = "administrator"
-        else:
-            dsUserName = self.UserText.text()
-            
-        for shot in selection.keys():    
-            for rl in selection[shot]:
-                if len(selection.keys()) == 1:
-                    startFrame = int(float(self.StartFrameInput.text()))
-                    endFrame = int(float(self.EndFrameInput.text()))
-                    rrFile = self.createRRFile(shot, rl, startFrame, endFrame)
-                else:
-                    rrFile = self.createRRFile(shot, rl)
-                
-                if sys.platform == "linux2":
-                    
-                    command = '/mnt/rrender/bin/lx64/rrSubmitterconsole ' + str(rrFile) +' UserName=0~' + str(dsUserName)  + ' DefaulClientGroup=0~RFarm Priority=2~' + str(self.prio) + ' RRO_AutoApproveJob=3~True SeqDivMIN=0~' + minSeq + ' SeqDivMAX=0~' + maxSeq
-                    if os.path.exists(rrFile):
-                        try:
-                            self.process(command).communicate()[0]
-                        except Exception as e:
-                            self.error('ERROR:%s' % e)
-                    else:
-                        self.error('ERROR:%s doesnt exists...\n%s' % (rrFile, command))
-                    
-                if sys.platform == "win32": 
-                    command = '//vfx-render-manager/royalrender/bin/win/rrSubmitterconsole.exe ' + str(rrFile) +' UserName=0~' + str(dsUserName)  + ' DefaulClientGroup=0~RFarm Priority=2~' + str(self.prio) + ' RRO_AutoApproveJob=3~True SeqDivMIN=0~' + minSeq + ' SeqDivMAX=0~' + maxSeq
-                    if os.path.exists('//vfx-render-manager/royalrender/bin/win/rrSubmitterconsole.exe'): print 'found rrSubmitterconsole'
-                    else:
-                        print 'couldnt find your rr submitter'
-                    if os.path.exists(rrFile):
-                        try:
-                            self.process(command).communicate()[0]
-                        except Exception as e:
-                            self.error('ERROR:%s' % e)
-                    else:
-                        self.error('ERROR:%s doesnt exists...\n%s' % (rrFile, command))
-        try:
-            self.save_config()
-        except Exception as e:
-            self.error('ERROR:%s' % e)
-        
     def checkVersion(self, path):
         '''
         Checks the path if there is any directories matching the pattern [vV]\d\d\d
@@ -441,18 +300,7 @@ class Window(base_class, form_class):
                 return 'v001'
         else:
             return 'v001'
-        
-    def OLD_getLastestVersion(self, dir, file):
-        '''Tries to match a string to the version format'''
-        self.checkPath(dir)
-        path = '%s/%s' % (dir, file)
-        versionList = [re.search('[v](\d+)', f).group() for f in os.listdir(dir) if file in f]
-        if versionList:
-            newVersion = 'v%03d' % (1 + int(max(versionList).strip('v')))
-        else:
-            newVersion = 'v001'
-        return newVersion
-        
+            
     def getLastestVersion(self, path, shot, renderLayer):
         '''Tries to match a string to the version format'''
         #path = self.getPublishPath(dir, shot, renderLayer)
@@ -474,7 +322,6 @@ class Window(base_class, form_class):
         dir = '%s/%s/film/%s/%s' % (self.dsComp, self.project, self.episode, self.sequence)
         return '%s/%s/comp/published3D/%s' % ( dir, shot, renderLayer.rstrip('_RL'))
 
-    
     def getRenderScene(self, shot, renderLayer):
         publishPath = self.getPublishPath(shot, renderLayer)
         
@@ -524,24 +371,105 @@ class Window(base_class, form_class):
                 print '\t', frame
                 os.remove('%s/%s' % (path, frame))
 
-    def createRRFile(self, shot, renderLayer, start=None, end=None, **kwargs):
-        '''
-        -version(look in folders)
-        +renderlayer
-        +camera
-        +shot (shot name i guess)
-        +start frame
-        +end frame
-        -extension grab from
-        
-        a copy of the renderfile goes into the renderFiles as shot_objects_type_RL_v001
-        '''
-        
-        if self.ApproveCheck.isChecked():
-            approve = "true"
-        else:
-            approve = "false"
+    def renderOtherConfirmation(self):
+        reply = QtGui.QMessageBox.question(self, 'Message',
+            "Do you not want to render EXR's?", QtGui.QMessageBox.Yes |
+            QtGui.QMessageBox.No| QtGui.QMessageBox.Cancel, QtGui.QMessageBox.No)
 
+        if reply == QtGui.QMessageBox.Yes:
+            return True
+        elif reply == QtGui.QMessageBox.No:
+            return False
+        elif reply == QtGui.QMessageBox.Cancel:
+            return False
+
+    def extCheck(self,extension):
+        if not re.search("exr",extension):
+            return self.renderOtherConfirmation()
+        else:
+            return True
+
+    def getExtension(self):
+        renderer = cmds.getAttr("defaultRenderGlobals.ren")
+        print renderer
+        
+        if renderer == "vray":
+            extension = cmds.getAttr("vraySettings.imageFormatStr")
+            if extension == "exr (multichannel)":
+                extension = "exr"
+        
+        if renderer == "mentalRay":
+            extension = cmds.getAttr("defaultRenderGlobals.imfkey")
+        
+        if renderer == "mayaSoftware" or renderer == "mayaHardware" or renderer == "mayaHardware2":
+            extensionKey = cmds.getAttr("defaultRenderGlobals.imageFormat")
+            extDict = {"6":"als","23":"avi","11":"cin","35":"dds","9":"eps","0":"gif","8":"jpg","7":"iff","10":"iff","31":"psd","36":"psd","32":"png","12":"yuv","2":"rla","5":"sgi","13":"sgi","1":"pic","19":"tga","3":"tif","4":"tif","20":"bmsp","63":"tim"}
+            extension = extDict[str(extensionKey)]
+            
+        return extension
+
+    def submitRR(self):
+        self.closePopup()
+        selection = self.getSelected()
+        if self.ApproveCheck.isChecked():
+            approve = "1"
+        else:
+            approve = "0"
+        
+        minSeq =str(int(self.minSeqDivInput.text()))
+        maxSeq = str(int(self.maxSeqDivInput.text()))
+        if self.saveFileCheck.isChecked():
+            self.mayaSave()
+        
+        if self.UserText.text() == "":
+            dsUserName = "administrator"
+        else:
+            dsUserName = self.UserText.text()
+            
+        extension = cmds.getAttr("vraySettings.imageFormatStr")        
+        if self.extCheck(extension):
+            for shot in selection.keys():    
+                for rl in selection[shot]:
+                    if len(selection.keys()) == 1:
+                        startFrame = int(float(self.StartFrameInput.text()))
+                        endFrame = int(float(self.EndFrameInput.text()))
+                        rrFile = self.createRRFile(shot, rl, startFrame, endFrame)
+                    else:
+                        rrFile = self.createRRFile(shot, rl)
+                    
+                    if sys.platform == "linux2":
+                        
+                        command = '/mnt/rrender/bin/lx64/rrSubmitterconsole ' + str(rrFile) +' UserName=0~' + str(dsUserName)  + ' DefaulClientGroup=0~farm Priority=2~' + str(self.prio) + ' AutoApproveJob=1~' + approve + ' SeqDivMIN=0~' + minSeq + ' SeqDivMAX=0~' + maxSeq
+                        
+                        if os.path.exists(rrFile):
+                            try:
+                                self.process(command).communicate()[0]
+                            except Exception as e:
+                                self.error('ERROR:%s' % e)
+                        else:
+                            self.error('ERROR:%s doesnt exists...\n%s' % (rrFile, command))
+                        
+                    if sys.platform == "win32": 
+                        command = '//vfx-render-server/royalrender/bin/win/rrSubmitterconsole.exe ' + str(rrFile) +' UserName=0~' + str(dsUserName)  + ' DefaulClientGroup=0~farm Priority=2~' + str(self.prio) + ' AutoApproveJob=1~' + approve + ' SeqDivMIN=0~' + minSeq + ' SeqDivMAX=0~' + maxSeq
+                        #if os.path.exists('//vfx-render-manager/royalrender/bin/win/rrSubmitterconsole.exe'): print 'found rrSubmitterconsole'
+                        if os.path.exists('//vfx-render-server/royalrender/bin/win/rrSubmitterconsole.exe'): 
+                            print 'found rrSubmitterconsole'
+                        else:
+                            print 'couldnt find your rr submitter'
+                        if os.path.exists(rrFile):
+                            try:
+                                self.process(command).communicate()[0]
+                            except Exception as e:
+                                self.error('ERROR:%s' % e)
+                        else:
+                            self.error('ERROR:%s doesnt exists...\n%s' % (rrFile, command))
+            try:
+                self.save_config()
+            except Exception as e:
+                self.error('ERROR:%s' % e)
+
+    def createRRFile(self, shot, renderLayer, start=None, end=None, **kwargs):
+        
         dir, file, version, fileExtension = self.getRenderScene(shot, renderLayer)
         renderScene = '%s/%s_%s%s' % (dir, file, version, fileExtension)
         renderXml = '%s/%s_%s.xml' % (dir, file, version)
@@ -551,7 +479,9 @@ class Window(base_class, form_class):
         imageDir = self.getImageDir(shot)
         renderCam = self.getRenderCam(shot)
         frameName = '%s_' % (renderLayer)
-        extension = 'exr'
+
+        extension = self.getExtension()
+
         minSeq = self.minSeqDivInput.text()
         maxSeq = self.maxSeqDivInput.text()
         
@@ -591,22 +521,23 @@ class Window(base_class, form_class):
                 outline = outline.replace("%IMAGEDIR%", imageDir)
                 outline = outline.replace("%RENDERCAM%", renderCam)
                 outline = outline.replace("%RENDERLAYER%", renderLayer)
-                outline = outline.replace("%START%", str(start))
-                outline = outline.replace("%END%", str(end))
+                outline = outline.replace("%START%", str(int(start)))
+                outline = outline.replace("%END%", str(int(end)))
                 outline = outline.replace("%EXTENSION%", extension)
                 outline = outline.replace("%FRAMENAME%", frameName)
                 outline = outline.replace("%USERNAME%", '')
                 outline = outline.replace("%PRIORITY%", str(self.prio))
                 outline = outline.replace("%SEQDIVMIN%", str(int(minSeq)))
                 outline = outline.replace("%SEQDIVMAX%", str(int(maxSeq)))
-                outline = outline.replace("%APPROVE%", approve)
+                #outline = outline.replace("%APPROVE%", approve)
                 rrFile.write(outline)
         template.close()
         rrFile.close()
         return renderXml
 
     def closePopup(self):
-        self.popupFrame.setGeometry(QtCore.QRect(590, 20, 171, 221))
+        #self.popupFrame.setGeometry(QtCore.QRect(590, 20, 171, 221))
+        self.popupFrame.setGeometry(QtCore.QRect(600, 20, 171, 221))
         self.scrollArea.setGeometry(QtCore.QRect(0, 0, 591, 251))
         self.scrollArea_2.setGeometry(QtCore.QRect(10, 250, 452, 32))    
         self.prio = self.priotyCombo.currentText()
@@ -626,25 +557,26 @@ class Window(base_class, form_class):
         camShot = cmds.shot(sName,q=True,cc=True)
         self.CamPopupCombo.addItem(camShot)
         
+        
+        self.renderer_LE.setText(str(cmds.getAttr("defaultRenderGlobals.ren")))
+        self.frameExt_LE.setText(str(self.getExtension()))
+
         camList = cmds.ls(type="camera")
         for cam in camList:
             if not cam == camShot and cam not in ['frontShape', 'sideShape', 'perspShape', 'topShape']:
                 self.CamPopupCombo.addItem(cam)
-            
+                 
     def error(self, string):
         self.dsError.set(string)
         self.dsError.show()
         print string
 
     def openPopup(self):
-        try:
-            self.setPopup()
-        except Exception as e:
-            self.error('Try selecting a shot from the list on the left side...\nERROR:%s.' % (e))
+        self.setPopup()
 
         shotList = self.shList.selectedItems()
         if len(shotList) >= 1:
-            self.popupFrame.setGeometry(QtCore.QRect(140, 5, 210, 240))
+            self.popupFrame.setGeometry(QtCore.QRect(0, 0, 241, 251))
             self.scrollArea.setGeometry(QtCore.QRect(-600, 5, 571, 241))
             self.scrollArea_2.setGeometry(QtCore.QRect(10, 300, 452, 32))
         if len(shotList) >= 2:
@@ -656,13 +588,17 @@ class Window(base_class, form_class):
             self.StartFrameInput.setEnabled(1)
             self.EndFrameInput.setEnabled(1)
         
-        #self.load_config()
-            
     def initalizeShots(self):
         for shot in self.shotNodeList:
             if re.match("(S[0-9][0-9][0-9][0-9])",shot):
                 if not os.path.isdir(self.seqPath + "/" + shot): 
                     dsFolderStruct.dsCreateFs("SHOT",self.seqPath + "/",shot)
+
+    def webBrowser(self):
+        new = 2 # open in a new tab, if possible
+        # open a public URL, in this case, the webbrowser docs
+        url = "http://vfx.duckling.dk/?page_id=924"
+        webbrowser.open(url,new=new)
 
     def process( self, cmd_line):
         '''
@@ -676,6 +612,78 @@ class Window(base_class, form_class):
                             stderr=subprocess.STDOUT,
                             )
         return proc
+    
+    def load_config(self):
+        '''
+        Load config which is a dictionary and applying setting.
+        '''
+        if os.path.exists(self.config_path):
+            config_file = open( '%s' % self.config_path, 'r')
+            list = config_file.readlines()
+            config_file.close()
+            
+            config = {}
+            for option in list:
+                key, value = option.split('=')
+                config[key] = value.strip()
+                
+            #print config
+            
+            if config.has_key('SHOT'):
+                items = [self.shList.item(i) for i in range(self.shList.count()) if str(self.shList.item(i).text()) in config.get('SHOT')]
+                
+                for item in items:
+                    item.setSelected(True) 
+                    self.shList.setCurrentItem(item)
+                
+            if config.has_key('RENDERLAYER'):
+                items = [self.rlList.item(i) for i in range(self.rlList.count()) if str(self.rlList.item(i).text()) in config.get('RENDERLAYER')]
+                for item in items: 
+                    item.setSelected(True)
+                    self.rlList.setCurrentItem(item)
+            
+            if config.has_key('USERNAME'): self.UserText.setText(str(config.get('USERNAME')))
+            if config.has_key('MINSEQDIV'): self.minSeqDivInput.setText(str(config.get('MINSEQDIV')))
+            if config.has_key('MAXSEQDIV'): self.maxSeqDivInput.setText(str(config.get('MAXSEQDIV')))
+            
+            if config.has_key('SAVEFILE'): 
+                self.saveFileCheck.setChecked(int(config.get('SAVEFILE')))
+            
+            if config.has_key('DELETEFRAMES'): self.DeleteFramesCheck.setChecked(int(config.get('DELETEFRAMES')))
+            
+            #if config.has_key('APPROVE'): self.ApproveCheck.setChecked(int(config.get('APPROVE')))
+
+            if config.has_key('USEGI'): self.GICheck.setChecked(int(config.get('USEGI')))
+            
+            if config.has_key('PRIOTY'):
+                index = [i for i in range(self.priotyCombo.count()) if self.priotyCombo.itemText(i) == config.get('PRIOTY')][0]
+                self.priotyCombo.setCurrentIndex(index)
+            
+    def save_config(self):
+        '''
+        Save setting to the config file as a dictionary.
+        '''
+        shot = [str(item.text()) for item in self.shList.selectedItems()] 
+        rl = [str(item.text()) for item in self.rlList.selectedItems()]
+        
+        if not os.path.exists(self.config_dir):
+            os.mkdir(self.config_dir)
+
+        config = open( '%s' % self.config_path, 'w')
+        config.write('USERNAME=%s\n'% (self.UserText.text()))
+        config.write('SHOT=%s\n' % (shot))
+        config.write('RENDERLAYER=%s\n' % (rl))
+        config.write('SAVEFILE=%s\n' % (self.saveFileCheck.checkState()))
+        config.write('DELETEFRAMES=%s\n' % (self.DeleteFramesCheck.checkState()))
+        #config.write('APPROVE=%s\n' % (self.ApproveCheck.checkState()))
+        config.write('USEGI=%s\n' % (self.GICheck.checkState()))
+        config.write('PRIOTY=%s\n' % (str(self.priotyCombo.currentText())))
+        config.write('MINSEQDIV=%s\n'% (self.minSeqDivInput.text()))
+        config.write('MAXSEQDIV=%s\n'% (self.maxSeqDivInput.text()))
+        config.close()
+        
+        self.load_config()
+        return self.config_path
     
 def dsSubmit():
     global myWindow

@@ -87,8 +87,8 @@ def minifigGlobalSource():
     return globalPath + "/globalMaya/Resources/minifig/"
 
 def listPantryPath():
-    print pantryPath
-    return pantryPath
+    print globalPath
+    return globalPath
 
 def listGlobalPath():
     return globalPath
@@ -114,6 +114,10 @@ def listProjects():
             else:
                 projects.append(folder)
     return projects
+
+def seqAnimPath(project, episode, seq):
+    seqPath = "%s%s%s%s/%s/3D/" % (pipePath, project, epPath, episode, seq)
+    return seqPath
 
 def listAssetTypes(project):
     listAssetTypePath = pipePath + project + assetTypePath

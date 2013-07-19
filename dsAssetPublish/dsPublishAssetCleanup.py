@@ -295,6 +295,9 @@ def setVrayID(vraySet):
             elif assetType == "character":
                 typeSet = 1
 
+        val = sgBridge.sgGetAssetID(projName, assetName, assetType, assetSubType) #"get from Shotgun"
+        if cmds.ojbExists("Rig_Grp.assetID"):
+            cmds.setAttr("Rig_Grp.assetID", val[0]["id"])
 
         if vraySet == 1 or typeSet == 1:
             if cmds.objExists("|Rig_Grp.project"):
@@ -304,7 +307,7 @@ def setVrayID(vraySet):
                         assetName = cmds.getAttr("|Rig_Grp.assetName")
                         assetSubType = cmds.getAttr("|Rig_Grp.assetSubType")
 
-                        val = sgBridge.sgGetAssetID(projName, assetName, assetType, assetSubType) #"get from Shotgun"
+                        #val = sgBridge.sgGetAssetID(projName, assetName, assetType, assetSubType) #"get from Shotgun"
                         print val[0]["id"]
                         shapes =  cmds.ls(type="mesh", long=True)
 

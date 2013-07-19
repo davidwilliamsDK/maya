@@ -1,5 +1,7 @@
 ## Clean dsFolder structure version 2.0
 
+print "folderstruct v2.2"
+
 from xml.etree import ElementTree as ET
 import os, platform, shutil,sys
 
@@ -8,6 +10,7 @@ def mkfile(filename, body=None):
         f.write(body or filename)
 
 def testDir(tmppath):
+    print tmppath
     if not os.path.isdir(tmppath):
         os.makedirs(str(tmppath))
         return False
@@ -16,14 +19,15 @@ def testDir(tmppath):
 
 def changePath(path, arg):
     path = str(path)
+
     if arg == 'dsComp':
         if sys.platform == 'win32':
             if path[0].lower() == 'p':
-                path = path.replace('%s:' % (path[0]), '//xserv2/VFXSAN/dsComp')
+                path = path.replace('%s:' % (path[0]), '//xserv2.duckling.dk/dsComp')
             else:
-                path = path.replace('//vfx-data-server/dsPipe', '//xserv2/VFXSAN/dsComp')
+                path = path.replace('//vfx-data-server/dsPipe', '//xserv2.duckling.dk/dsComp')
         else:
-            path = path.replace('/dsPipe', '/mounts/san/dsComp')
+            path = path.replace('/dsPipe', '/dsComp')
     
     if arg == 'dsRender':
         if sys.platform == 'win32':
@@ -79,10 +83,11 @@ def mkSymlink(path):
     
 def testType(val,tmppath):
     if val == "file":
-        if not os.path.isfile(tmpPath):
+        if not os.path.isfile(tmppath):
             tmppath = changePath(tmppath, 'dsComp') 
             mkfile(tmppath)
     if val == "folder":
+        print tmppath
         testDir(tmppath)
     if val == "symlink":
         mkSymlink(tmppath)
@@ -145,13 +150,13 @@ def dsCreateFs(TYPE,path,name):
                             testType(subsubchild.attrib['type'],pathNew + parent.attrib['name'] +"/"+ child.attrib['name'] + "/"+ subchild.attrib['name']+ "/"+ subsubchild.attrib['name'])                  
             print "created Folder structure for " + name
         else:
-            print "3D folder structure for " + pathNew + " already exits!!"
+            print "3D folder structure for " + " already exits!!"
     
     
     if TYPE == "COMP":
         pathTest = path + name + "/comp/"
-        if testDir(pathTest) == False:
-            pathNew = path + name + "/"
+        pathNew = path + name + "/"
+        try:
             for parent in root.getchildren():
                 testType(parent.attrib['type'],pathNew + parent.attrib['name'])
                 for child in parent.getchildren():
@@ -160,12 +165,11 @@ def dsCreateFs(TYPE,path,name):
                         testType(subchild.attrib['type'],pathNew + parent.attrib['name'] +"/"+ child.attrib['name'] +"/"+ subchild.attrib['name'])
                         for subsubchild in subchild.getchildren():
                             testType(subsubchild.attrib['type'],pathNew + parent.attrib['name'] +"/"+ child.attrib['name'] + "/"+ subchild.attrib['name']+ "/"+ subsubchild.attrib['name'])                  
-            print "created Folder structure for " + name
-        else:
-            print "comp folder structure for " + pathNew + " already exits!!"
+        except:
+            pass
+        print "created Folder structure for " + name
             
-    print str(pathNew)  + ".local"
-    if not os.path.isdir(str(pathNew) + ".local"):
-        if TYPE == 'PROJECT':
-            shutil.copytree(str(resources),str(pathNew + "/.local"))
+        if not os.path.isdir(str(pathNew) + ".local"):
+            if TYPE == 'PROJECT':
+                shutil.copytree(str(resources),str(pathNew + "/.local"))
         

@@ -5,6 +5,7 @@ try:
 except:
     pass
 import sys, os, re, math
+import dsCommon.dsMayaEnv as dsENV
 
 class mObject(object):
     def __init__(self, node):
@@ -96,6 +97,8 @@ class mObject(object):
         return string
     
 def export():#path
+    outPath = setEnv()
+    outPath = outPath + "/camExport"
     objList = []
     for node in pm.ls(sl=True):
         if pm.nodeType(node) == 'transform':
@@ -106,7 +109,33 @@ def export():#path
                     mel.eval('deleteUI FbxWarningWindow;')
                 except Exception as e:
                     print 'Error:%s' % e
-    writeNukeFile(objList)
+    writeNukeFile(objList,outPath)
+
+def exportCamSeq():#path
+    outPath = setEnv()
+    shotList = []
+    for shot in cmds.ls(type="shot"):
+        if re.search("s[0-9][0-9][0-9][0-9]",shot):
+            shotList.append(shot)
+
+    for shot in shotList:
+        newoutPath = outPath + "/" + shot + "/comp/3DExport/camExport"
+        camera = cmds.shot(shot, q=True,cc=True)
+        objList = []
+        node = cmds.select(camera)
+        cam = cmds.listRelatives( camera, p=True )
+        camNode = cam[0]
+        cmds.select(camNode)
+        for node in pm.ls(sl=True):
+            if pm.nodeType(node) == 'transform':
+                obj = mObject(node)
+                objList.append(obj)
+                if obj.type == 'mesh':
+                    try:
+                        mel.eval('deleteUI FbxWarningWindow;')
+                    except Exception as e:
+                        print 'Error:%s' % e
+        writeNukeFile(objList,newoutPath)
 
 def toNuke(objList):
     string = ''
@@ -187,16 +216,39 @@ def getNukeAttributeName(string):
         pass
     else:
         return string
-    
-def writeNukeFile(objList):
+
+def setEnv():
+    dsENV.setGlobals()
+    project = '%s' % os.getenv('PROJECT')
+    episode = '%s' % os.getenv('EPISODE')
+    sequence = '%s' % os.getenv('SEQUENCE')
+    print '%s/%s/film/%s/%s' % ("/dsComp", project, episode, sequence)
     if sys.platform == "linux2":
-        home = os.getenv("HOME")
-        outputPath = '%s/camera.nk' % (home)
-    elif sys.platform == 'win32':
-        home = 'C:%s' % os.getenv("HOMEPATH")
-        outputPath = '%s\camera.nk' % (home)
+        outPath = '%s/%s/film/%s/%s' % ("/dsComp", project, episode, sequence)
+    elif sys.platform == "win32":
+        outPath = '%s/%s/film/%s/%s' % ("S:/", project, episode, sequence)
+    return outPath
+
+def writeNukeFile(objList,outPath):
+    if not os.path.isdir(outPath):os.makedirs(outPath)
+    
+    outputPath = '%s/camera.nk' % (outPath)
     
     print 'Exporting to:', outputPath
     file = open(outputPath, 'w')
     file.write( toNuke(objList))
     file.close()
+    
+def checkCameraName():
+    camList = cmds.ls(cameras=True)
+    for cam in camList:
+        camName = cmds.listRelatives(cam,allParents=True)
+        if camName[0] != "front" or camName[0] != "persp" or camName[0] != "side" or camName[0] != "top":
+            print camName[0]
+            if not re.search("s[0-9][0-9][0-9][0-9]",camName[0]):
+                print "run the camera clean up script please"
+                
+            else:
+                print "match"
+                exportCamSeq()
+                break

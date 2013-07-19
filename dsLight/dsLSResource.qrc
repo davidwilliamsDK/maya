@@ -1,0 +1,15 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>icons/ambient.png</file>
+    <file>icons/arealight.png</file>
+    <file>icons/directionallight.png</file>
+    <file>icons/menuIconEdit.png</file>
+    <file>icons/pointlight.png</file>
+    <file>icons/render_VRayLightDomeShape.png</file>
+    <file>icons/render_VRayLightIESShape.png</file>
+    <file>icons/render_VRayLightRectShape.png</file>
+    <file>icons/render_VRayLightSphereShape.png</file>
+    <file>icons/spotlight.png</file>
+    <file>icons/volumelight.png</file>
+  </qresource>
+</RCC>
