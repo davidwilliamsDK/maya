@@ -1,6 +1,6 @@
 #Import python modules
 print "before anything"
-import sys, os, re, shutil, random, sip, platform
+import sys, os, re, shutil, random, sip, platform, webbrowser
 import subprocess
 import getpass
 from PyQt4 import QtCore, QtGui
@@ -63,6 +63,7 @@ class MyForm(QtGui.QMainWindow):
         QtCore.QObject.connect(self.ui.iconButtonGroup, QtCore.SIGNAL("buttonClicked(int)"), self.iconUpdate);
         QtCore.QObject.connect(self.ui.iconCheckBox, QtCore.SIGNAL("stateChanged(int)"), self.iconEnable);
         QtCore.QObject.connect(self.ui.createPushButton, QtCore.SIGNAL("clicked()"), self.createAsset);
+        QtCore.QObject.connect(self.ui.createSelectionPushButton, QtCore.SIGNAL("clicked()"), self.createSelectedAsset);
         QtCore.QObject.connect(self.ui.assetNameTextEdit, QtCore.SIGNAL("returnPressed()"), self.createAsset);
         QtCore.QObject.connect(self.ui.createMinifigPushButton, QtCore.SIGNAL("clicked()"), self.createMinifigAsset);
         QtCore.QObject.connect(self.ui.removePushButton, QtCore.SIGNAL("clicked()"), self.removeAsset);
@@ -76,7 +77,8 @@ class MyForm(QtGui.QMainWindow):
         self.ui.actionExit.triggered.connect(self.closeEvent)
         self.ui.actionExit.triggered.connect(self.exitWidget)
 
-        print "shotgun"
+        self.ui.menuHelp.triggered.connect(self.helpWiki)
+
         #Shotgun
         self.ui.actionReloadTemplates.triggered.connect(self.listTemplates)
         self.ui.reloadAssetStatus.triggered.connect(self.reloadAssetStatus)
@@ -118,6 +120,12 @@ class MyForm(QtGui.QMainWindow):
             self.ui.createIcon.setEnabled(False)
             self.ui.exportPart.setEnabled(False)
             self.ui.incrPushButton.setEnabled(False)
+            self.ui.createSelectionPushButton.setEnabled(False)
+
+    def helpWiki(self):
+        url = "http://vfx.duckling.dk/?page_id=935"
+        new = 2
+        webbrowser.open(url, new=new)
 
     def importMinifig(self):
         source = dsProjectUtil.minifigGlobalSource()
@@ -209,34 +217,61 @@ class MyForm(QtGui.QMainWindow):
         if not self.ui.shotgunTemplateComboBox.findText(self.setTemplateState) == -1:
             self.ui.shotgunTemplateComboBox.setCurrentIndex(self.ui.shotgunTemplateComboBox.findText(self.setTemplateState))
 
-    def exportPart(self):
+    def exportPart(self, assetSettings=None):
         cmds.delete(ch=True)
-        project = self.ui.productionComboBox.currentText()
-        assetType = self.ui.assetTypeComboBox.currentText()
-        assetSubType = self.ui.assetSubTypeComboBox.currentText()
-        assetName = self.ui.assetListWidget.currentItem().text()
+        if assetSettings:
+            project = assetSettings["projName"]
+            assetType = assetSettings["assetType"]
+            assetSubType = assetSettings["assetSubType"]
+            assetName = assetSettings["assetName"]
+        else:
+            project = self.ui.productionComboBox.currentText()
+            assetType = self.ui.assetTypeComboBox.currentText()
+            assetSubType = self.ui.assetSubTypeComboBox.currentText()
+            assetName = self.ui.assetListWidget.currentItem().text()
 
         fileName = "%s%s_Model" % (dsProjectUtil.listAssetDevPath(project, assetType, assetSubType, assetName), assetName)
         print fileName
 
         cmds.file(fileName, f=True, options="V=0", type="mayaAscii", es=True)
 
-        self.createAssetIcon(True)
+        self.createAssetIcon(True, assetSettings)
 
-    def createAssetIcon(self, isolateView=False):
-        project = self.ui.productionComboBox.currentText()
-        assetType = self.ui.assetTypeComboBox.currentText()
-        assetSubType = self.ui.assetSubTypeComboBox.currentText()
-        assetName = self.ui.assetListWidget.currentItem().text()
+    def createAssetIcon(self, isolateView=False, assetSettings=None):
+        if assetSettings:
+            project = assetSettings["projName"]
+            assetType = assetSettings["assetType"]
+            assetSubType = assetSettings["assetSubType"]
+            assetName = assetSettings["assetName"]
+        else:
+            project = self.ui.productionComboBox.currentText()
+            assetType = self.ui.assetTypeComboBox.currentText()
+            assetSubType = self.ui.assetSubTypeComboBox.currentText()
+            assetName = self.ui.assetListWidget.currentItem().text()
 
         filename = dsProjectUtil.listAssetIcon(project, assetType, assetSubType, assetName)
-        self.renderIcon()
-        self.saveIcon(filename)
-        self.saveIconToShotgun(project, assetName, assetType, assetSubType, filename)
+        try:
+            self.renderIcon(isolateView)
+            self.saveIcon(filename)
+            self.saveIconToShotgun(project, assetName, assetType, assetSubType, filename)
+        except:
+            pass
 
         self.assetListUpdate()
 
-    def renderIcon(self):
+    def renderIcon(self,isolateView=False):
+        render = mel.eval("currentRenderer")
+        if not render == "vray":
+             cmds.setAttr("defaultRenderGlobals.currentRenderer", "vray", type="string")
+        if not cmds.objExists('vraySettings'):
+            cmds.createNode("VRaySettingsNode", n="vraySettings")
+
+        selectedOption = mel.eval("optionVar -exists renderViewRenderSelectedObj")
+        if isolateView:
+            if selectedOption == 1:
+                selectedValue = mel.eval("optionVar -q renderViewRenderSelectedObj")
+                mel.eval("optionVar -intValue renderViewRenderSelectedObj 1;")
+
         cmds.setAttr("defaultRenderGlobals.animation", 1)
         cmds.setAttr("vraySettings.animBatchOnly", 1)
         width = cmds.getAttr("vraySettings.width")
@@ -250,6 +285,11 @@ class MyForm(QtGui.QMainWindow):
         cmds.setAttr("vraySettings.vfbOn", vfb)
         cmds.setAttr("vraySettings.width", width)
         cmds.setAttr("vraySettings.height", height)
+
+        if isolateView:
+            if selectedOption == 1:
+                print selectedValue
+                mel.eval("optionVar -intValue renderViewRenderSelectedObj %s;" % selectedValue)
 
     def saveIcon(self, filename):
         renderPanels = cmds.getPanel(scriptType="renderWindowPanel")
@@ -493,6 +533,45 @@ class MyForm(QtGui.QMainWindow):
 
         self.ui.assetNameTextEdit.clear()
 
+    def createSelectedAsset(self):
+        #Make sure something is selected
+        sel = cmds.ls(sl=True, long=True)
+        if not sel == []:
+            #Prepare
+            asset = cmds.duplicate(sel)
+            selNew= cmds.ls(sl=True, long=True)
+            try:
+                cmds.parent(selNew, w=True)
+            except:
+                print "Already parented to World"
+
+            #Create The Asset
+            print "creating Asset"
+            assetSettings = self.createAsset()
+
+            #Export Selected to the model File
+            print "Exporting part to model"
+            self.exportPart(assetSettings)
+
+            project = str(assetSettings["projName"])
+            assetType = str(assetSettings["assetType"])
+            assetSubType = str(assetSettings["assetSubType"])
+            assetName = str(assetSettings["assetName"])
+
+            #Finish The Setup and Publish
+            melCmd = ('source assetExportSetup; cleanAssetExport "%s";' % str(assetSettings))
+            fileName = "%s%s_Rig.ma" % (dsProjectUtil.listAssetDevPath(project, assetType, assetSubType, assetName), assetName)
+            print fileName
+
+            logPath = "C:\\assetExport_log.txt"
+            os.system("maya -batch -log '%s' -command '%s' -file '%s'" % (logPath, str(melCmd), fileName))
+
+            #Cleanup
+            cmds.delete(cmds.ls(sl=True, long=True))
+            cmds.select(sel)
+        else:
+            print "Please Select Something to Export"
+
     def createAsset(self):
         if self.ui.assetNameTextEdit.text() == "":
             print "No name Typed"
@@ -543,6 +622,7 @@ class MyForm(QtGui.QMainWindow):
 
 
         self.ui.assetNameTextEdit.clear()
+        return {'projName':project, 'assetType':assetType, 'assetSubType':assetSubType, 'assetName':assetName}
 
     def removeAsset(self):
         currentSelection = self.ui.assetListWidget.currentItem()
@@ -816,6 +896,7 @@ class MyForm(QtGui.QMainWindow):
 
 
         menu.addSeparator()
+        timelog = menu.addAction("Time Log")
         quitAction = menu.addAction("Quit")
         exploreAction = menu.addAction("Open in Explore")
         menu.addSeparator()
@@ -841,6 +922,8 @@ class MyForm(QtGui.QMainWindow):
         #Check Action
         if action == quitAction:
             self.exitWidget()
+        if action == timelog:
+            self.timelog()
         if action == exploreAction:
             self.openAssetExplore()
         if action == incrAction:
@@ -859,6 +942,10 @@ class MyForm(QtGui.QMainWindow):
         if action == progressAction:
             status = "ip"
             MyForm.setShotgunStatus(self, selectedItem.text(), status)
+
+    def timelog(self):
+        print "print open timelog window"
+        pass
 
     def closeEvent(self, event):
         self.writeSettings()

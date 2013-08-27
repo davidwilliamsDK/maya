@@ -28,12 +28,17 @@ def removeNonActiveProxies(sel=""):
     if not sel == "":
         currentProxy = listCurrentProxy(sel)
         relatedProxies = listRelatedProxies(sel)
-        relatedProxies.remove(currentProxy)
+        print "+++++++++++++++++++++++++++++++++++++++++++++++++++++"
+        print relatedProxies
+        print currentProxy
+        if currentProxy:
+            if currentProxy in relatedProxies:
+                relatedProxies.remove(currentProxy)
 
-        for rn in relatedProxies:
-            cmds.file(removeReference=True, referenceNode=rn)
-            #If the line above fuckes up, use the one belov instead, it's using maya's own proxyRemove
-            #mel.eval("dsProxyRemove %s;" % rn)
+            for rn in relatedProxies:
+                cmds.file(removeReference=True, referenceNode=rn)
+                #If the line above fuckes up, use the one belov instead, it's using maya's own proxyRemove
+                #mel.eval("dsProxyRemove %s;" % rn)
 
 def addProxies(sel=""):
     if not sel == "":

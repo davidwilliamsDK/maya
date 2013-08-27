@@ -13,6 +13,7 @@ from PyQt4.QtGui import *
 #Import UI
 from dsPublishAssetUI import Ui_exportAsset
 import dsPublishAssetUI
+reload(dsPublishAssetUI)
 
 #If maya is running import Maya cmds
 if osUtil.mayaRunning() == True:
@@ -102,15 +103,19 @@ class assetExportForm(QtGui.QMainWindow):
                         item = str(proxySet.text())
                         proxyList.append(item)
 
-                assetExportForm.exportBatch(self, filePath, refPath, subAssetList, proxyList, assetName)
+                tiledEXR = self.ui.iconCheckBox.isChecked()
+                assetExportForm.exportBatch(self, filePath, refPath, subAssetList, proxyList, assetName, tiledEXR)
             else:
                 print "the asset might not have the right attributes or naming "
         else:
             print "there's no valid 'Root_Ctrl' in the scene"
 
-    def exportBatch(self, filePath, refPath, subAssets=None, proxies=None, assetName=None):
+    def exportBatch(self, filePath, refPath, subAssets=None, proxies=None, assetName=None, tiledEXR="False"):
+        print "####################################################"
+        print tiledEXR
         vrayID = 1
         logFolder = "_Log"
+        versions = "versions"
         tmpFile = ("/_%s_%s" % (assetName, "export_tmp.ma"))
         path = filePath.rsplit("/", 1)[0]
 
@@ -120,6 +125,9 @@ class assetExportForm(QtGui.QMainWindow):
 
         if not os.path.exists(("%s/%s" % (refPath, logFolder))):
             os.mkdir(("%s/%s" % (refPath, logFolder)))
+
+        if not os.path.exists(("%s/%s" % (refPath, versions))):
+            os.mkdir(("%s/%s" % (refPath, versions)))
 
         logFolder = ("%s/%s" % (refPath, logFolder))
 
@@ -132,13 +140,13 @@ class assetExportForm(QtGui.QMainWindow):
                     for proxy in proxies:
                         if ":" in proxy:
                             proxy = proxy.rsplit(":")[-1]
-                        melCmd = ('source publishAssetBatch; exportBatchProcedures "%s" "%s" "%s" "%s";' % (subAsset, proxy, refPath, vrayID))
+                        melCmd = ('source publishAssetBatch; exportBatchProcedures "%s" "%s" "%s" "%s" "%s";' % (subAsset, proxy, refPath, vrayID, tiledEXR))
                         if str(osUtil.listOS()) == "Linux":
                             os.system("maya -batch -command '%s' -file '%s%s'" % (melCmd, path, tmpFile))
                         if str(osUtil.listOS()) == "Windows":
                             os.system("maya -batch -log '%s/%s_%s_log.txt' -command '%s' -file '%s%s'" % (logFolder, subAsset, proxy, melCmd, path, tmpFile))
                 else:
-                    melCmd = ('source publishAssetBatch; exportBatchProcedures "%s" "%s" "%s" "%s";' % (subAsset, proxies, refPath, vrayID))
+                    melCmd = ('source publishAssetBatch; exportBatchProcedures "%s" "%s" "%s" "%s" "%s";' % (subAsset, proxies, refPath, vrayID, tiledEXR))
                     if str(osUtil.listOS()) == "Linux":
                         os.system("maya -batch -command '%s' -file '%s%s'" % (melCmd, path, tmpFile))
                     if str(osUtil.listOS()) == "Windows":
@@ -155,7 +163,7 @@ class assetExportForm(QtGui.QMainWindow):
                     if ":" in proxy:
                         proxy = proxy.rsplit(":")[-1]
 
-                    melCmd = ('source publishAssetBatch; exportBatchProcedures "%s" "%s" "%s" "%s";' % (subAssets, proxy, refPath, vrayID))
+                    melCmd = ('source publishAssetBatch; exportBatchProcedures "%s" "%s" "%s" "%s" "%s";' % (subAssets, proxy, refPath, vrayID, tiledEXR))
                     if str(osUtil.listOS()) == "Linux":
                         os.system("maya -batch -command '%s' -file '%s%s'" % (melCmd, path, tmpFile))
                     if str(osUtil.listOS()) == "Windows":

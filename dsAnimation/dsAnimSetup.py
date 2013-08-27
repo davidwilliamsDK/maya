@@ -130,6 +130,8 @@ def setSceneSpecs(filmInfo):
         cmds.currentUnit(time='pal')
 
     try:
+        cmds.setAttr("vraySettings.aspectLock", 0)
+        cmds.setAttr("vraySettings.aspectRatio", 1.777)
         cmds.setAttr("vraySettings.width", 1920)
         cmds.setAttr("vraySettings.height", 1080)
     except:

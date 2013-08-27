@@ -16,8 +16,6 @@ v1.0.5
 
 """
 
-
-
 import sys
 import sip
 import re
@@ -156,6 +154,11 @@ class Window(base_class, form_class):
             self.renderBox.setCurrentIndex(self.rlRender[rl][0])
         
     def setGlobals(self):
+        
+        try:
+            cmds.setAttr('dsMetaData.scriptType',2)
+        except:
+            pass
         
         project = '%s' % os.getenv('PROJECT')
         episode = '%s' % os.getenv('EPISODE')

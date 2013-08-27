@@ -1,22 +1,14 @@
-import itertools as it
-import time
-import subprocess
+import os, sys
 
-files = range(5)
-max_load = 3
-sleep_interval = 0.5
+#from PIL import ImageGrab
 
-pid_list = []
-for combo in it.combinations(files, 2):
-    print files
-    # Random command that takes time'
-    cmd = "ipconfig"
-  
-    # Launch and record this command
-    print "Launching: "+ str(combo), cmd
-    pid = subprocess.Popen(cmd)
-    pid_list.append(pid)
+#box = (100,100,400,400)
+#ImageGrab.grab().crop(box).save("C:/temp/screen_capture.jpg", "JPEG")
 
-    # Deal with condtion of exceeding maximum load
-    while len(filter(lambda x: x.poll() is None, pid_list)) >= max_load:
-        time.sleep(sleep_interval)
+#ImageGrab.grab().save("C:/temp/screen_capture.jpg", "JPEG")
+#os.system("import -window root C:\\temp\\screen_capture.png")
+
+#os.system("set DISPLAY=localhost:0.0")
+
+#os.system("import c:/temp/window.miff")
+

@@ -43,16 +43,6 @@ class Ui_exportAsset(object):
         self.assetExportPushButton.setMinimumSize(QtCore.QSize(251, 31))
         self.assetExportPushButton.setObjectName("assetExportPushButton")
         self.gridLayout.addWidget(self.assetExportPushButton, 3, 0, 1, 2)
-
-        self.iconCheckBox = QtGui.QCheckBox(self.centralwidget)
-        self.iconCheckBox.setMinimumSize(QtCore.QSize(25, 17))
-        self.iconCheckBox.setMaximumSize(QtCore.QSize(150, 13))
-        self.iconCheckBox.setText("Convert To EXR")
-        self.iconCheckBox.setCheckable(True)
-        self.iconCheckBox.setChecked(False)
-        self.iconCheckBox.setObjectName("iconCheckBox")
-        self.gridLayout.addWidget(self.iconCheckBox, 4, 0, 1, 2)
-
         exportAssetWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(exportAssetWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 274, 21))

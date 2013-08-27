@@ -2,6 +2,7 @@ import maya.cmds as cmds
 import maya.mel as mel
 import dsSgUtil as sgBridge
 reload(sgBridge)
+import time, os, shutil
 
 def exportCleanSets(subAsset=None, proxy=None, refPath=None, vraySet=0):
     print "Start on Script --------------------------------------"
@@ -143,6 +144,14 @@ def exportCleanSets(subAsset=None, proxy=None, refPath=None, vraySet=0):
     if not subAssets or subAssets == "None":
         renamefile = "%s/%s_%s.mb" % (filePath, fileBaseName, proxy)
         cmds.file(rename=renamefile)
+
+    #Backup file before saving
+    if os.path.exists(renamefile):
+        if os.path.exists("%s/versions/" % filePath):
+            localtime = time.localtime()
+            version = "%s/versions/%s_%s_%04d-%02d-%02d_%02d-%02d.mb" % (filePath, fileBaseName, proxy, localtime[0], localtime[1], localtime[2], localtime[3], localtime[4])
+            shutil.copyfile(renamefile, version)
+    #"filename_proxyetc_%04d-%02d-%02d_%02d-%02d" % (localtime[0], localtime[1], localtime[2], localtime[3], localtime[4])
 
     cmds.file(save=True, force=True, type='mayaBinary' )
     print "ENDING CLEAN UP"

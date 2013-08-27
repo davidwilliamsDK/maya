@@ -87,27 +87,42 @@ def CreateLegoShader(RGB,materialID,sTransparent,sChrome,sGlitter,sGlow,sMetalli
         B = float(RGB[2])/255
         ### Create Vray shader with correct name:
         cmds.shadingNode( 'VRayMtl' , asShader=True, name=shader)
-        ### Sett global
-        cmds.setAttr(shader+".roughnessAmount", 0.15)
-        cmds.setAttr(shader+".hilightGlossinessLock", 0)
-        cmds.setAttr(shader+".hilightGlossiness", 0.6)
-        cmds.setAttr(shader+".reflectionColorAmount", 0.15)
-        cmds.setAttr(shader+".reflectionColor", 1,1,1)
-        
-        cmds.setAttr(shader+".refractionIOR", 1.460)
-        
-        cmds.setAttr(shader+".traceReflections", 0)
-        cmds.setAttr(shader+".traceRefractions", 0)
-        cmds.setAttr(shader+".refractionsMaxDepth", 1)
-        cmds.setAttr(shader+".reflectionsMaxDepth", 1)
-        ### Sett Diffuse color:
+        ### Sett Basic attr
         cmds.setAttr(shader+".diffuseColor", R,G,B)
-        ### Sett Transparency
+	cmds.setAttr(shader + ".diffuseColorAmount", 0.8)
+        cmds.setAttr(shader+".transparency", 1,1,1)
+	cmds.setAttr(shader + ".roughnessAmount", 0)
+        cmds.setAttr(shader+".illumColor", 0,0,0)
+        ### Sett Reflection attr
+	cmds.setAttr(shader + ".brdfType", 2)
+        cmds.setAttr(shader+".reflectionColor", 0.4,0.4,0.4)
+        cmds.setAttr(shader+".reflectionColorAmount", 1)
+        cmds.setAttr(shader+".reflectionExitColor", 0,0,0)
+	cmds.setAttr(shader+".hilightGlossinessLock", 1)
+
+	cmds.setAttr(shader + ".reflInterpolation", 0)
+	cmds.setAttr(shader + ".useFresnel", 1)
+	cmds.setAttr(shader + ".lockFresnelIORToRefractionIOR", 1)
+        cmds.setAttr(shader+".traceReflections", 1)
+        cmds.setAttr(shader+".reflectionsMaxDepth", 1)
+
+        cmds.setAttr(shader+".refractionIOR", 1.460)
+	### Sett Anisotropy attr
+	### Sett Refraction attr
         if sTransparent == 1:
+	    cmds.setAttr(shader+".diffuseColor", 0,0,0)
+	    cmds.setAttr(shader + ".diffuseColorAmount", 0)
+	    cmds.setAttr(shader+".refractionColor", R,G,B)
             cmds.setAttr(shader+".refractionColorAmount", 1)
-            cmds.setAttr(shader+".refractionColor", R/1.5,G/1.5,B/1.5)
+	    cmds.setAttr(shader+".refractionExitColorOn", 1)
+	    cmds.setAttr(shader+".refractionExitColor", R/5,G/5,B/5)
             cmds.setAttr(shader+".traceRefractions", 1)
             cmds.setAttr(shader+".refractionsMaxDepth", 3)
+	    cmds.setAttr(shader+".fogColor", R,G,B)
+	    cmds.setAttr(shader+".fogMult", 0.1)
+	    cmds.setAttr(shader+".affectShadows", 1)
+
+
         ### Sett Metallic
         if sMetallic == 1:
             cmds.setAttr(shader+".hilightGlossinessLock", 1)

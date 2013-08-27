@@ -217,6 +217,22 @@ class Ui_AssetWindow(object):
         self.createPushButton.setObjectName(_fromUtf8("createPushButton"))
         self.gridLayout.addWidget(self.createPushButton, 19, 0, 1, 3)
 
+        #CreateAsset From
+        self.createSelectionPushButton = QtGui.QPushButton(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.createSelectionPushButton.sizePolicy().hasHeightForWidth())
+        self.createSelectionPushButton.setSizePolicy(sizePolicy)
+        self.createSelectionPushButton.setMinimumSize(QtCore.QSize(201, 31))
+        self.createSelectionPushButton.setMaximumSize(QtCore.QSize(201, 31))
+        font = QtGui.QFont()
+        font.setWeight(75)
+        font.setBold(True)
+        self.createSelectionPushButton.setFont(font)
+        self.createSelectionPushButton.setObjectName(_fromUtf8("createSelectionPushButton"))
+        self.gridLayout.addWidget(self.createSelectionPushButton, 20, 0, 1, 3)
+
         #Create MinifigOushBar
         self.createMinifigPushButton = QtGui.QPushButton(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -231,7 +247,7 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.createMinifigPushButton.setFont(font)
         self.createMinifigPushButton.setObjectName(_fromUtf8("createMinifigPushButton"))
-        self.gridLayout.addWidget(self.createMinifigPushButton, 20, 0, 1, 3)
+        self.gridLayout.addWidget(self.createMinifigPushButton, 21, 0, 1, 3)
 
         #Create Splitter
         self.splitterB = QtGui.QFrame(self.centralwidget)
@@ -240,12 +256,12 @@ class Ui_AssetWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.splitterB.sizePolicy().hasHeightForWidth())
         self.splitterB.setSizePolicy(sizePolicy)
-        self.splitterB.setMinimumSize(QtCore.QSize(201, 16))
-        self.splitterB.setMaximumSize(QtCore.QSize(201, 16))
+        self.splitterB.setMinimumSize(QtCore.QSize(201, 40))
+        self.splitterB.setMaximumSize(QtCore.QSize(201, 40))
         self.splitterB.setFrameShape(QtGui.QFrame.HLine)
         self.splitterB.setFrameShadow(QtGui.QFrame.Sunken)
         self.splitterB.setObjectName(_fromUtf8("splitterB"))
-        self.gridLayout.addWidget(self.splitterB, 21, 0, 2, 3)
+        self.gridLayout.addWidget(self.splitterB, 22, 0, 2, 3)
 
         #Create Icon Button
         self.createIcon = QtGui.QPushButton(self.centralwidget)
@@ -261,7 +277,7 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.createIcon.setFont(font)
         self.createIcon.setObjectName(_fromUtf8("createIcon"))
-        self.gridLayout.addWidget(self.createIcon, 22, 0, 1, 2)
+        self.gridLayout.addWidget(self.createIcon, 23, 0, 1, 2)
 
         self.exportPart = QtGui.QPushButton(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -276,7 +292,7 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.exportPart.setFont(font)
         self.exportPart.setObjectName(_fromUtf8("exportPart"))
-        self.gridLayout.addWidget(self.exportPart, 23, 0, 1, 2)
+        self.gridLayout.addWidget(self.exportPart, 24, 0, 1, 2)
 
         self.incrPushButton = QtGui.QPushButton(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -291,7 +307,7 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.incrPushButton.setFont(font)
         self.incrPushButton.setObjectName(_fromUtf8("incrPushButton"))
-        self.gridLayout.addWidget(self.incrPushButton, 24, 0, 1, 3)
+        self.gridLayout.addWidget(self.incrPushButton, 25, 0, 1, 3)
 
         self.removePushButton = QtGui.QPushButton(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -306,7 +322,7 @@ class Ui_AssetWindow(object):
         font.setBold(True)
         self.removePushButton.setFont(font)
         self.removePushButton.setObjectName(_fromUtf8("removePushButton"))
-        self.gridLayout.addWidget(self.removePushButton, 25, 0, 1, 3)
+        self.gridLayout.addWidget(self.removePushButton, 26, 0, 1, 3)
 
         #Add Spacer
         spacerItem4 = QtGui.QSpacerItem(20, 17, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -459,6 +475,7 @@ class Ui_AssetWindow(object):
         self.shogunTemplateLabel.setText(QtGui.QApplication.translate("AssetWindow", "Set Shogun Template", None, QtGui.QApplication.UnicodeUTF8))
         self.assetNameLabel.setText(QtGui.QApplication.translate("AssetWindow", "Asset Name", None, QtGui.QApplication.UnicodeUTF8))
         self.createPushButton.setText(QtGui.QApplication.translate("AssetWindow", "Create Asset", None, QtGui.QApplication.UnicodeUTF8))
+        self.createSelectionPushButton.setText(QtGui.QApplication.translate("AssetWindow", "Create Asset From Selection", None, QtGui.QApplication.UnicodeUTF8))
         self.createMinifigPushButton.setText(QtGui.QApplication.translate("AssetWindow", "Create Minifig Char", None, QtGui.QApplication.UnicodeUTF8))
         self.createIcon.setText(QtGui.QApplication.translate("AssetWindow", "Create Icon", None, QtGui.QApplication.UnicodeUTF8))
 

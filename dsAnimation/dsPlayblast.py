@@ -116,7 +116,7 @@ def getRoot():
     filePath = cmds.file(q=True,l=True)[0]
     pathTmp = filePath.split("/")
     newPath = ""
-    
+
     if re.search("3D",filePath):
         for path in pathTmp:
             if newPath == "":
@@ -124,8 +124,10 @@ def getRoot():
             else:
                 newPath = newPath + "/" + path
             if re.search("3D",path):
-                break
-    
+                    break
+
+    if re.search("P:/",newPath):
+        newPath = newPath.replace("P:/","vfx-data-server/dsPipe/")
     '''
     if re.search("q[0-9][0-9][0-9][0-9]",filePath):
         for path in pathTmp:
@@ -211,7 +213,7 @@ def pbCollectShots(shotList):
         if sys.platform == "linux2":
             sPBPath = "/" + newPath + "/playBlast/" + shot
         else:
-            sPBPath = newPath + "/playBlast/" + shot
+            sPBPath = "//" + newPath + "/playBlast/" + shot
         ver = dsCollect.getLatest(sPBPath)
         rootPath = sPBPath + "/" + ver
         tl = os.listdir(rootPath)
@@ -254,7 +256,7 @@ def pbShot(shot,user):
     endFrame = cmds.shot(dsShot, q=True, et=True)
     cam = cmds.shot(dsShot,q=True,cc=True)
     
-    cmds.sequenceManager( currentTime=startFrame)
+    cmds.sequenceManager(currentTime=startFrame)
     
     newPath = getRoot()
     
@@ -294,8 +296,10 @@ def pbShot(shot,user):
     if sys.platform =="linux2":
         pbFrames = "/" + pbPath + pbName + "_" + str(pathTmp[-1][:-3]) + "_" + ver
     else:
-        pbFrames = pbPath + pbName + "_" + str(pathTmp[-1][:-3]) + "_" + ver
-
+        pbFrames = "//" + pbPath + pbName + "_" + str(pathTmp[-1][:-3]) + "_" + ver
+    
+    print pbFrames
+    
     cmds.setAttr("defaultRenderGlobals.imageFormat",8)
     
     frameRange = range(int(startFrame),int(endFrame) + 1)
@@ -312,8 +316,10 @@ def pbShot(shot,user):
         imageList.sort()
         imagePath = pbPath[:-1] + "/" +imageList[1]
     else:
-        imageList = os.listdir(pbPath[:-1] + "/")
+        imageList = os.listdir("//" + pbPath[:-1] + "/")
         imageList.sort()
-        imagePath = pbPath[:-1] + "/" +imageList[1]
+        imagePath = "//" + pbPath[:-1] + "/" +imageList[1]
+    
+    print dsShot
     
     sgTools.sgPublishFrames(str(imagePath),str(filePath),'anim',str(user),ver,dsShot)

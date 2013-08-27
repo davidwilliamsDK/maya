@@ -41,8 +41,6 @@ class Window(base_class, form_class):
             base_class.__init__(self, parent)
             self.run()
             
-
-
     def run(self):
         self.setupUi( self )
         self.setObjectName( 'dsShotOpener' )
@@ -218,10 +216,11 @@ class Window(base_class, form_class):
             if view == "hero":
                 self.sceneRootPath = self.taskRootPath + tk
                 tmpList = os.listdir(self.sceneRootPath)
-                for t in tmpList:
-                    if t[0] != ".":
-                        if re.search(".ma",t):
-                            self.scene_LW.addItem(t)
+
+                tmpList = self.getMA(tmpList)
+                if len(tmpList) != 0:
+                    for t in tmpList:
+                        self.scene_LW.addItem(t)
                 
             if view == "version":
                 self.sceneRootPath = self.taskRootPath + tk + "/version"
@@ -232,34 +231,36 @@ class Window(base_class, form_class):
                         if t[0] != ".":
                             vList = os.listdir(self.sceneRootPath + "/" + t)
                             for v in vList:
-                                if re.search(".ma",v):
+                                if re.search(".ma",v) or re.search(".mb",v):
                                     self.scene_LW.addItem(v)
         if tk == "all":
             if view == "hero":
-               
                 for tk in self.taskList:
                     self.sceneRootPath = self.taskRootPath + tk
-                    self.scene_LW.addItem("------"+str(tk)+"------")
                     tmpList = os.listdir(self.sceneRootPath)
-                    for t in tmpList:
-                        if t[0] != ".":
-                            if re.search(".ma",t):
-                                self.scene_LW.addItem(t)
+                    
+                    tmpList = self.getMA(tmpList)
+                    if len(tmpList) != 0:
+                        self.scene_LW.addItem("------"+str(tk)+"------")
+                        for t in tmpList:
+                            self.scene_LW.addItem(t)
                     
             if view == "version":
-                    
                 for tk in self.taskList:
-                    self.scene_LW.addItem("------"+str(tk)+"------")
                     self.sceneRootPath = self.taskRootPath + tk + "/version"
                     if os.path.isdir(self.sceneRootPath):
                         tmpList = os.listdir(self.sceneRootPath)
                         
-                        for t in tmpList:
-                            if t[0] != ".":
-                                vList = os.listdir(self.sceneRootPath + "/" + t)
-                                for v in vList:
-                                    if re.search(".ma",v):
-                                        self.scene_LW.addItem(v)
+                        tmpList = self.getMA(tmpList)
+                        
+                        if len(tmpList) != 0:
+                            self.scene_LW.addItem("------"+str(tk)+"------")
+                            for t in tmpList:
+                                if t[0] != ".":
+                                    vList = os.listdir(self.sceneRootPath + "/" + t)
+                                    for v in vList:
+                                        if re.search(".ma",v) or re.search(".mb",v):
+                                            self.scene_LW.addItem(v)
 
     def checkScene(self,path):
         sceneList = []
@@ -270,12 +271,23 @@ class Window(base_class, form_class):
 
         return sceneList
 
+    def getMA(self,tmpList):
+        newList = []
+        for t in tmpList:
+            if t[0] != ".":
+                if re.search(".ma",t) or re.search(".mb",t):
+                    newList.append(t)
+        return newList
+
     def createEmptyFrom(self,menu,item):
 
         tk = self.task_CB.currentText()
         sq = self.sequence_CB.currentText()
         selectedItem = self.scene_LW.currentItem()
-        destFile = self.taskRootPath + tk + "/" + sq + "_" + tk + ".ma"
+        
+        ext = selectedItem.text()[-3:]
+        
+        destFile = self.taskRootPath + tk + "/" + sq + "_" + tk + ext
         templateFile = self.taskRootPath +menu.title() + "/" + item
             
         if selectedItem != None:
@@ -627,7 +639,7 @@ class Window(base_class, form_class):
                         data = {'code':self.version_file_name,'project':self.proj,'user':self.currentUser,'sg_task':self.taskObj,'sg_file_name':heroName,'sg_path':self.path_version_file,'description':description,'sg_version_file_name':self.version_file_name,'entity':self.seqObj}
                        
                     if val == "shot":
-                        self.shotObj = sgTools.sgGetShot(sg,str(sName),str(sq),str(pr),str(ep),[])
+                        self.shotObj = sgTools.sgGetShot(sg,str(sName),str(self.sq),str(self.pr),str(self.ep),[])
                         data = {'code':self.version_file_name,'project':self.proj,'user':self.currentUser,'sg_task':self.taskObj,'sg_file_name':heroName,'sg_path':self.path_version_file,'description':description,'sg_version_file_name':self.version_file_name,'entity':self.shotObj}
                    
                     result = sgTools.sgCreateObj('Version',data)
@@ -881,6 +893,9 @@ class Window(base_class, form_class):
                 self.connect(createTask,QtCore.SIGNAL('triggered()'), lambda item=selectedItem: self.VersionToHero())
                 
                 action = menu.exec_(self.scene_LW.mapToGlobal(position))
+
+    def closeEvent(self,event):
+        self.save_config()
 
     def load_config(self):
         '''

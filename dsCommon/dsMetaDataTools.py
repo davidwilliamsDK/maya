@@ -23,10 +23,19 @@ else:
     sys.path.append('//192.168.0.161/dsGlobal/dsCore/shotgun')
 import sgTools
 
+def shotCheck():
+    shotList = cmds.ls(type = "shot")
+    for shot in shotList:
+        shotNode = shot
+        shotNodeName = cmds.getAttr(shot + ".shotName")
+        if shotNode != shotNodeName:
+            print "shotName is not the same as the shotNodeName"
+            cmds.rename(shotNode,shotNodeName)
+
 def sceneCheck():
     sgTask = cmds.getAttr("dsMetaData.sgTask")
     tmpPath = cmds.file(q=True,l=True)[0]
-
+    shotCheck()
     if not re.search(sgTask,tmpPath):
         try:
             updatedsMD()
