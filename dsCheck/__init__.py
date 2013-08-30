@@ -17,7 +17,7 @@ def dsMDCheck():
 
         if fileName == "":
             print "your working in a untitled maya scene.. Please save file in correct position"
-            dsSaveScene.dsSS()
+            #dsSaveScene.dsSS()
         else:
             print "no dsMD node in your scene creating one.. may take 2 min."
             dsMDT.createMDscriptNode()

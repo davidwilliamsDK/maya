@@ -86,5 +86,3 @@ def camClean():
     exportCam(selectList)
     
 camClean()
-
-cmds.file(q=True, expandName=True)

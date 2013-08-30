@@ -8,7 +8,7 @@
 	<Layer>     %RENDERLAYER%     </Layer>
 	<Software>     Maya     </Software>
 	<Renderer>     %RENDERER%     </Renderer>
-	<Version>     2012.0     </Version>
+	<Version>     2013.0     </Version>
 	<Tiled>     false     </Tiled>
 	<JobBit>     all     </JobBit>
 	<SendAppBit>     all     </SendAppBit>
@@ -17,8 +17,8 @@
 	<SeqEnd>     %END%     </SeqEnd>
 	<SeqStep>     1     </SeqStep>
 	<SeqFileOffset>     0     </SeqFileOffset>
-	<ImageWidth>     1280     </ImageWidth>
-	<ImageHeight>     720     </ImageHeight>
+	<ImageWidth>     %WIDTH%     </ImageWidth>
+	<ImageHeight>     %HEIGHT%     </ImageHeight>
 	<ImageMultiType>     0     </ImageMultiType>
 	<ImageMulti>     0     </ImageMulti>
 	<ImageFilename>     /%FRAMENAME%     </ImageFilename>
@@ -45,7 +45,6 @@
 	<numberOfPreviewFrames>     6     </numberOfPreviewFrames>
 	<RRO_AbortJobswithLowerPriority>     false     </RRO_AbortJobswithLowerPriority>
 	<RRO_IgnoreCrashes>     false     </RRO_IgnoreCrashes>
-	<RRO_AutoApproveJob> %APPROVE% </RRO_AutoApproveJob>
 	<RRO_Unused>     false     </RRO_Unused>
 	<RRO_SendSMS>     false     </RRO_SendSMS>
 	<RRO_RenderPreviewFirst>     true     </RRO_RenderPreviewFirst>
@@ -64,7 +63,7 @@
 	<PrePostCommand> 	 PPEXRCropchannels ~ 100 ~ 100 ~ 1 ~ 0   </PrePostCommand>
 
 <!-- Clients can be assigned by a list of booleans or bye group name -->
-	<Clients>     Maya2010     </Clients>
+	<Clients>     farm     </Clients>
 </Job>
 
 </RR_Job_File>

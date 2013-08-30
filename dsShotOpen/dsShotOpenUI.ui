@@ -18,8 +18,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>800</width>
-    <height>800</height>
+    <width>452</width>
+    <height>681</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -33,34 +33,83 @@
     <property name="verticalSpacing">
      <number>0</number>
     </property>
-    <item row="6" column="0">
-     <widget class="QLabel" name="seq_L">
-      <property name="maximumSize">
-       <size>
-        <width>201</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Sequence:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="0">
-     <widget class="QComboBox" name="task_CB">
+    <item row="17" column="0">
+     <widget class="QSplitter" name="splitter">
       <property name="minimumSize">
        <size>
-        <width>150</width>
-        <height>0</height>
+        <width>201</width>
+        <height>32</height>
        </size>
       </property>
+      <property name="maximumSize">
+       <size>
+        <width>203</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="opaqueResize">
+       <bool>true</bool>
+      </property>
+      <property name="handleWidth">
+       <number>1</number>
+      </property>
+      <widget class="QPushButton" name="ref_B">
+       <property name="minimumSize">
+        <size>
+         <width>67</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>67</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>ref</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="import_B">
+       <property name="minimumSize">
+        <size>
+         <width>67</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>67</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>import</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="retire_B">
+       <property name="minimumSize">
+        <size>
+         <width>67</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>67</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>retire</string>
+       </property>
+      </widget>
      </widget>
     </item>
     <item row="0" column="0">
@@ -83,30 +132,13 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QComboBox" name="projects_CB">
+    <item row="7" column="0">
+     <widget class="QComboBox" name="sequence_CB">
       <property name="minimumSize">
        <size>
         <width>150</width>
         <height>0</height>
        </size>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QComboBox" name="episodes_CB">
-      <property name="minimumSize">
-       <size>
-        <width>150</width>
-        <height>0</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="0">
-     <widget class="QLabel" name="shots_L">
-      <property name="text">
-       <string>Shots In Sequence:</string>
       </property>
      </widget>
     </item>
@@ -144,56 +176,33 @@
       </property>
      </widget>
     </item>
-    <item row="19" column="0">
-     <widget class="QPushButton" name="sg_B">
-      <property name="minimumSize">
-       <size>
-        <width>201</width>
-        <height>31</height>
-       </size>
-      </property>
+    <item row="2" column="0">
+     <widget class="QLabel" name="project_L">
       <property name="maximumSize">
        <size>
         <width>201</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>SHOTGUN</string>
-      </property>
-     </widget>
-    </item>
-    <item row="20" column="0">
-     <widget class="QPushButton" name="explorer_B">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>201</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>201</width>
-        <height>31</height>
+        <height>25</height>
        </size>
       </property>
       <property name="font">
        <font>
-        <weight>50</weight>
-        <bold>false</bold>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
        </font>
       </property>
       <property name="text">
-       <string>Explorer</string>
+       <string>Project:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QComboBox" name="projects_CB">
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
       </property>
      </widget>
     </item>
@@ -231,26 +240,6 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QComboBox" name="user_CB">
-      <property name="minimumSize">
-       <size>
-        <width>150</width>
-        <height>0</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0">
-     <widget class="QComboBox" name="sequence_CB">
-      <property name="minimumSize">
-       <size>
-        <width>150</width>
-        <height>0</height>
-       </size>
-      </property>
-     </widget>
-    </item>
     <item row="11" column="0">
      <widget class="QListWidget" name="shots_LW">
       <property name="minimumSize">
@@ -279,60 +268,6 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="episode_L">
-      <property name="maximumSize">
-       <size>
-        <width>201</width>
-        <height>26</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Episode:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="14" column="0">
-     <widget class="QPushButton" name="createEmpty_B">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>201</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>201</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Create Empty Scene </string>
-      </property>
-     </widget>
-    </item>
     <item row="8" column="0">
      <widget class="QLabel" name="task_L">
       <property name="font">
@@ -347,7 +282,24 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="1" rowspan="21">
+    <item row="10" column="0">
+     <widget class="QLabel" name="shots_L">
+      <property name="text">
+       <string>Shots In Sequence:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QComboBox" name="task_CB">
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" rowspan="22">
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
        <widget class="QLabel" name="scene_L">
@@ -437,8 +389,28 @@
       </item>
      </layout>
     </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="project_L">
+    <item row="1" column="0">
+     <widget class="QComboBox" name="user_CB">
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QComboBox" name="episodes_CB">
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="seq_L">
       <property name="maximumSize">
        <size>
         <width>201</width>
@@ -453,87 +425,128 @@
        </font>
       </property>
       <property name="text">
-       <string>Project:</string>
+       <string>Sequence:</string>
       </property>
      </widget>
     </item>
-    <item row="17" column="0">
-     <widget class="QSplitter" name="splitter">
+    <item row="4" column="0">
+     <widget class="QLabel" name="episode_L">
+      <property name="maximumSize">
+       <size>
+        <width>201</width>
+        <height>26</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Episode:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="19" column="0">
+     <widget class="QPushButton" name="sg_B">
       <property name="minimumSize">
        <size>
         <width>201</width>
-        <height>32</height>
+        <height>31</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>203</width>
+        <width>201</width>
         <height>31</height>
        </size>
       </property>
-      <property name="lineWidth">
-       <number>0</number>
+      <property name="text">
+       <string>SHOTGUN</string>
       </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="opaqueResize">
+     </widget>
+    </item>
+    <item row="14" column="0">
+     <widget class="QPushButton" name="createEmpty_B">
+      <property name="enabled">
        <bool>true</bool>
       </property>
-      <property name="handleWidth">
-       <number>1</number>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <widget class="QPushButton" name="ref_B">
-       <property name="minimumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>ref</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="import_B">
-       <property name="minimumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>import</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="retire_B">
-       <property name="minimumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>retire</string>
-       </property>
-      </widget>
+      <property name="minimumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Create Empty Scene </string>
+      </property>
+     </widget>
+    </item>
+    <item row="21" column="0">
+     <widget class="QPushButton" name="explorer_B">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Explorer</string>
+      </property>
+     </widget>
+    </item>
+    <item row="16" column="0">
+     <widget class="QPushButton" name="saveAs_B">
+      <property name="minimumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>SaveAS</string>
+      </property>
      </widget>
     </item>
    </layout>

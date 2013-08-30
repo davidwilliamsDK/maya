@@ -144,7 +144,6 @@ class Window(base_class, form_class):
         if sys.platform == "linux2":
             cmd = '/mnt/rrender/lx__rrControl.sh'
         if sys.platform == "win32":
-#             cmd = r"\\vfx-render-manager\royalrender\bin\win\rrControl.exe"
             cmd = r"\\vfx-render-server\royalrender\bin\win\rrControl.exe"
         self.process(cmd)
         
@@ -439,14 +438,12 @@ class Window(base_class, form_class):
                         rrFile = self.createRRFile(shot, rl, startFrame, endFrame)
                     else:
                         rrFile = self.createRRFile(shot, rl)
-                    
                     if sys.platform == "linux2":
-                        
-                        command = '/mnt/rrender/bin/lx64/rrSubmitterconsole ' + str(rrFile) +' UserName=0~' + str(dsUserName)  + ' DefaulClientGroup=0~farm Priority=2~' + str(self.prio) + ' AutoApproveJob=1~' + approve + ' SeqDivMIN=0~' + minSeq + ' SeqDivMAX=0~' + maxSeq
-                        
+                        command = '/rrender/bin/lx64/rrSubmitterconsole ' + str(rrFile) +' UserName=0~' + str(dsUserName)  + ' DefaulClientGroup=0~farm Priority=2~' + str(self.prio) + ' AutoApproveJob=1~' + approve + ' SeqDivMIN=0~' + minSeq + ' SeqDivMAX=0~' + maxSeq
+                        print command
                         if os.path.exists(rrFile):
                             try:
-                                self.process(command).communicate()[0]
+                                print self.process(command).communicate()[0]
                             except Exception as e:
                                 self.error('ERROR:%s' % e)
                         else:
@@ -454,7 +451,6 @@ class Window(base_class, form_class):
                         
                     if sys.platform == "win32": 
                         command = '//vfx-render-server/royalrender/bin/win/rrSubmitterconsole.exe ' + str(rrFile) +' UserName=0~' + str(dsUserName)  + ' DefaulClientGroup=0~farm Priority=2~' + str(self.prio) + ' AutoApproveJob=1~' + approve + ' SeqDivMIN=0~' + minSeq + ' SeqDivMAX=0~' + maxSeq
-                        #if os.path.exists('//vfx-render-manager/royalrender/bin/win/rrSubmitterconsole.exe'): print 'found rrSubmitterconsole'
                         if os.path.exists('//vfx-render-server/royalrender/bin/win/rrSubmitterconsole.exe'): 
                             print 'found rrSubmitterconsole'
                         else:
@@ -482,7 +478,9 @@ class Window(base_class, form_class):
         imageDir = self.getImageDir(shot)
         renderCam = self.getRenderCam(shot)
         frameName = '%s_' % (renderLayer)
-
+        
+        width = cmds.getAttr("defaultResolution.width")
+        height = cmds.getAttr("defaultResolution.height")
         extension = self.getExtension()
 
         minSeq = self.minSeqDivInput.text()
@@ -524,6 +522,8 @@ class Window(base_class, form_class):
                 outline = outline.replace("%IMAGEDIR%", imageDir)
                 outline = outline.replace("%RENDERCAM%", renderCam)
                 outline = outline.replace("%RENDERLAYER%", renderLayer)
+                outline = outline.replace("%WIDTH%", str(width))
+                outline = outline.replace("%HEIGHT%", str(height))
                 outline = outline.replace("%START%", str(int(start)))
                 outline = outline.replace("%END%", str(int(end)))
                 outline = outline.replace("%EXTENSION%", extension)

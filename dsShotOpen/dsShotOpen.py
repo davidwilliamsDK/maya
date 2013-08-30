@@ -5,18 +5,21 @@ if sys.platform == 'linux2':
     sys.path.append('/dsGlobal/globalMaya/Python/PyQt_Linx64')
     sys.path.append('/dsGlobal/dsCore/shotgun')
     sys.path.append('/dsGlobal/dsCore/maya/dsCommon')
-    uiFile = '/dsGlobal/dsCore/maya/dsShotOpenUI.ui'
+    sys.path.append('/dsGlobal/dsCore/maya/dsCheck')
+    uiFile = '/dsGlobal/dsCore/maya/dsShotOpen/dsShotOpenUI.ui'
 
 else:
     sys.path.append(r'\\vfx-data-server\dsGlobal\globalMaya\Python\PyQt_Win64')
     sys.path.append(r'\\vfx-data-server\dsGlobal\dsCore\shotgun')
     sys.path.append(r'\\vfx-data-server\dsGlobal\dsCore\maya')
+    sys.path.append(r'\\vfx-data-server\dsGlobal\dsCore\maya\dsCheck')
     uiFile = '//vfx-data-server/dsGlobal/dsCore/maya/dsShotOpen/dsShotOpenUI.ui'
 
 
 import dsCommon.dsMetaDataTools as dsMDT
-import sgTools,dsVersionUp      
+import sgTools,dsVersionUp   
 import dsCommon.dsOsUtil as dsOsUtil;reload(dsOsUtil)
+import dsSaveScene;reload(dsSaveScene)
 
 if dsOsUtil.mayaRunning() == True:
     import maya.cmds as cmds
@@ -77,6 +80,7 @@ class Window(base_class, form_class):
         self.task_CB.currentIndexChanged.connect(self.init_scene)
 
         self.createEmpty_B.clicked.connect(self.createEmpty)
+        self.saveAs_B.clicked.connect(self.saveAs)
         self.ref_B.clicked.connect(self.refScene)
         self.import_B.clicked.connect(self.importScene)
         self.retire_B.clicked.connect(self.retireScene)
@@ -93,6 +97,10 @@ class Window(base_class, form_class):
         self.connect(self.actionVfx_wiki_dk,QtCore.SIGNAL('triggered()'), lambda item=[]: self.webBrowser())
 
         self.load_config()
+
+    def saveAs(self):
+        print "save file as"
+        dsSaveScene.dsSS()
 
     def init_GUI(self):
         self.hero_RB.setEnabled(False)
@@ -125,11 +133,12 @@ class Window(base_class, form_class):
         list.sort()
         for project in list:
             self.projects_CB.addItem(project)
-
+        
     def init_episodes(self):
         '''
         Adds episodes to self.episodes
         '''
+        #self.keepTask()
         self.episodes_CB.clear()
         pr = self.projects_CB.currentText()
         
@@ -145,6 +154,7 @@ class Window(base_class, form_class):
         Adds sequences to self.sequences
         Searches after pattern is [qQ][0-9][0-9][0-9][0-9]
         '''
+        #self.keepTask()
         self.sequence_CB.clear()
         pr = self.projects_CB.currentText()
         ep = self.episodes_CB.currentText()
@@ -174,9 +184,11 @@ class Window(base_class, form_class):
                 self.task_CB.addItem("all")        
                 for t in self.taskList:
                     self.task_CB.addItem(t)
-
+                    
+        self.loadTaskconfig()
+            
     def init_scene(self):
-        
+        #self.loadTaskconfig()
         self.hero_RB.setEnabled(True)
         self.version_RB.setEnabled(True)
             
@@ -186,12 +198,13 @@ class Window(base_class, form_class):
         if self.version_RB.isChecked():
             view = "version"
             self.sceneView(view)
-
+        
     def init_shots(self):
         self.init_vars()
         self.shots_LW.clear()
         sg = sgTools.getSG()
-        sgShots = sg.find("Shot",[['project.Project.name','is',str(self.pr)],['sg_sequence.Sequence.code','is',str(self.sq)]],['code','id','sg_cut_in','sg_cut_out','sg_mayain','sg_mayaout'])
+        #['sg_scene.Scene.code','is', str(epiName)]"
+        sgShots = sg.find("Shot",[['project.Project.name','is',str(self.pr)],['sg_scene.Scene.code','is',str(self.ep)],['sg_sequence.Sequence.code','is',str(self.sq)]],['code','id','sg_cut_in','sg_cut_out','sg_mayain','sg_mayaout'])
         for shot in sgShots:
             self.shots_LW.addItem(str(shot['code']))
 
@@ -236,14 +249,17 @@ class Window(base_class, form_class):
         if tk == "all":
             if view == "hero":
                 for tk in self.taskList:
-                    self.sceneRootPath = self.taskRootPath + tk
-                    tmpList = os.listdir(self.sceneRootPath)
-                    
-                    tmpList = self.getMA(tmpList)
-                    if len(tmpList) != 0:
-                        self.scene_LW.addItem("------"+str(tk)+"------")
-                        for t in tmpList:
-                            self.scene_LW.addItem(t)
+                    try:
+                        self.sceneRootPath = self.taskRootPath + tk
+                        tmpList = os.listdir(self.sceneRootPath)
+                        
+                        tmpList = self.getMA(tmpList)
+                        if len(tmpList) != 0:
+                            self.scene_LW.addItem("------"+str(tk)+"------")
+                            for t in tmpList:
+                                self.scene_LW.addItem(t)
+                    except:
+                        pass
                     
             if view == "version":
                 for tk in self.taskList:
@@ -266,8 +282,9 @@ class Window(base_class, form_class):
         sceneList = []
         tmpList = os.listdir(path)
         for t in tmpList:
-            if re.search(".ma",t) or re.search(".mb",t):
-                sceneList.append(t)
+            if str(t) != ".mayaSwatches":
+                if re.search(".ma",t) or re.search(".mb",t):
+                    sceneList.append(t)
 
         return sceneList
 
@@ -284,8 +301,9 @@ class Window(base_class, form_class):
         tk = self.task_CB.currentText()
         sq = self.sequence_CB.currentText()
         selectedItem = self.scene_LW.currentItem()
-        
-        ext = selectedItem.text()[-3:]
+
+        ext = item[-3:]
+        #ext = selectedItem.text()[-3:]
         
         destFile = self.taskRootPath + tk + "/" + sq + "_" + tk + ext
         templateFile = self.taskRootPath +menu.title() + "/" + item
@@ -346,7 +364,6 @@ class Window(base_class, form_class):
     def openScene(self):
         self.init_vars()
         selectedItem = self.scene_LW.currentItem()
-        
         
         if selectedItem.text()[0] != "-":
             if self.tk == "all":
@@ -426,7 +443,6 @@ class Window(base_class, form_class):
         self.versionAction()
         
         shutil.copy(mayaScene,historyPath + "/" + selectedItem.text())
-        #self.filePermissions(historyPath + "/" + selectedItem.text())
         os.remove(str(mayaScene))
         print "retired " + mayaScene
             
@@ -897,12 +913,29 @@ class Window(base_class, form_class):
     def closeEvent(self,event):
         self.save_config()
 
+    def loadTaskconfig(self):
+        '''
+        Load config which is a dictionary and applying setting.
+        '''
+        if os.path.exists(self.config_path):
+            config_file = open( '%s' % self.config_path, 'r')
+            list = config_file.readlines()
+            config_file.close()
+
+            config = {}
+            for option in list:
+                key, value = option.split('=')
+                config[key] = value.strip()
+            
+            for i in range(self.task_CB.count()):
+                if str(self.task_CB.itemText(i)) == str(config.get('TASK')):
+                    self.task_CB.setCurrentIndex(i)
+                
     def load_config(self):
         '''
         Load config which is a dictionary and applying setting.
         '''
         if os.path.exists(self.config_path):
-            print 'Loading config file from:', self.config_path
             config_file = open( '%s' % self.config_path, 'r')
             list = config_file.readlines()
             config_file.close()

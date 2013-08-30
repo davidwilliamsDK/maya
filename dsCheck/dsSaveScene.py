@@ -5,7 +5,12 @@ import sgTools
 import maya.cmds as cmds
 import dsCommon.dsMetaDataTools as dsMDT
 reload(dsMDT)
+import dsCommon.dsOsUtil as dsOsUtil;reload(dsOsUtil)
 
+
+if dsOsUtil.mayaRunning() == True:
+    import maya.cmds as cmds
+    import maya.OpenMayaUI as mui
 
 def getMayaWindow():
     'Get the maya main window as a QMainWindow instance'
@@ -21,17 +26,26 @@ else:
 form_class, base_class = uic.loadUiType(uiFile)
 class Window(base_class, form_class):
 
-    def __init__(self, parent=None):
-        base_class.__init__(self, parent)
+    def __init__( self, parent = getMayaWindow(), *args ):
+        super( base_class, self ).__init__( parent )
         self.setupUi(self)
 
         self.taskList = ['blocking','anim','light','effect','template']
-
+                    
         if sys.platform == "linux2":
+            self.home = os.getenv("HOME")
+            self.config_dir = '%s/.shotOpen' % (self.home)
+            self.config_path = '%s/config.ini' % (self.config_dir)
+            self.dsPipe = "/dsPipe"
             self.dsPipe = "/dsPipe"
             self.emptyMA = '/dsGlobal/globalMaya/Resources/emptyScene.ma'
 
         elif sys.platform == 'win32':
+            self.home = 'C:%s' % os.getenv("HOMEPATH")
+            self.config_dir = '%s/.shotOpen' % (self.home)
+            self.config_dir = self.config_dir.replace("/","\\")
+            self.config_path = '%s/config.ini' % (self.config_dir)
+            self.config_path = self.config_path.replace("/","\\")
             self.dsPipe = "//vfx-data-server/dsPipe"
             self.emptyMA = '//vfx-data-server/dsGlobal/globalMaya/Resources/emptyScene.ma'
         
@@ -45,6 +59,8 @@ class Window(base_class, form_class):
         self.nn_LE.textChanged.connect(self.updateFN)
         
         self.save_B.clicked.connect(self.saveScene)
+
+        self.load_config()
 
     def init_projects(self):
         '''
@@ -142,6 +158,41 @@ class Window(base_class, form_class):
             dsMDT.testMDNode()
             self.close()
             cmds.file( save=True, type='mayaAscii',force=True)
+            
+    def load_config(self):
+        '''
+        Load config which is a dictionary and applying setting.
+        '''
+        if os.path.exists(self.config_path):
+            print 'Loading config file from:', self.config_path
+            config_file = open( '%s' % self.config_path, 'r')
+            list = config_file.readlines()
+            config_file.close()
+
+            config = {}
+            for option in list:
+                key, value = option.split('=')
+                config[key] = value.strip()
+
+            try:
+                index = [i for i in range(self.projects_CB.count()) if self.projects_CB.itemText(i) == config.get('PROJECT')][0]
+                self.projects_CB.setCurrentIndex(index)
+
+                index = [i for i in range(self.episodes_CB.count()) if self.episodes_CB.itemText(i) == config.get('EPISODE')][0]
+                self.episodes_CB.setCurrentIndex(index)
+
+                index = [i for i in range(self.sequence_CB.count()) if self.sequence_CB.itemText(i) == config.get('SEQUENCE')][0]
+                self.sequence_CB.setCurrentIndex(index)
+
+                index = [i for i in range(self.task_CB.count()) if self.task_CB.itemText(i) == config.get('TASK')][0]
+                self.task_CB.setCurrentIndex(index)
+
+            except:
+                print "error reseting config file"
+                os.remove(self.config_path)
+
+    #def closeEvent(self,event):
+        #self.save_config()
             
 def dsSS():
     global myWindow
