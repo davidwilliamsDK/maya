@@ -1,0 +1,1060 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>399</width>
+    <height>862</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Vray Shape Attributes</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>381</width>
+      <height>811</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Attributes</string>
+     </attribute>
+     <widget class="QPushButton" name="remove">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>180</y>
+        <width>211</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Remove Attr's from Selection</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="subdivision">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>161</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Subdivision</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="add">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>150</y>
+        <width>211</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Add Attr's to Selection</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="userAttr">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>90</y>
+        <width>201</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>User attributes</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="disQuality">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>201</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Subdivision and Displacement Quality</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="objectID">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>110</y>
+        <width>201</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Object ID</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="fogFade">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>130</y>
+        <width>201</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Fog fade out radius</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="roundEdges">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>70</y>
+        <width>201</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Round edges</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="disControl">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>201</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Displacement control</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Settings</string>
+     </attribute>
+     <widget class="QCheckBox" name="subDiv_render">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>10</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Render as subdivision surface</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="subDiv_borders">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>30</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Subdivide UVs at borders</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="subDiv_uv">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>50</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Subdivide UVs</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="disQuality_override">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>90</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Override Global Settings</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="disQuality_view">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>110</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>View dependent</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="subDiv_static">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>70</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Generate Static Geometry</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="disQuality_edgeSlider">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>140</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="disQuality_edgeLabel">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>140</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Edge length</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="disQuality_maxLabel">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>170</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Max subdivs</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QSlider" name="disQuality_maxSlider">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>170</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="disQuality_edge">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>140</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>4.000</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="disQuality_max">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>170</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>4</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="dis_none">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>200</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>None</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="dis_typeLabel">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>230</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Displacement type</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="dis_type">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>230</y>
+        <width>241</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <item>
+       <property name="text">
+        <string>2D Displacement</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Normal Displacement</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Vector Displacement</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Vector Displacement (absolute)</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="dis_amountLabel">
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>270</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Displacement Amount</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="dis_shiftLabel">
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>300</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Displacement Shift</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QSlider" name="dis_shiftSlider">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>300</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="dis_shift">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>300</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0.000</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="dis_amountSlider">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>270</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="dis_amount">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>270</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1.000</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="dis_continuity">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>330</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Keep Continuity</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="dis_waterLevel">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>350</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Enable Water Level</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="dis_waterAmountSlider">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>380</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="dis_textureSlider">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>410</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="dis_waterAmountLabel">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>380</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Water Level</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="dis_waterAmount">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>380</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0.000</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="dis_texture">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>410</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>512</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="dis_textureLabel">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>410</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Texture resolution</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="dis_precisionLabel">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>440</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Precision</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="dis_precision">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>440</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>8</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="dis_precisionSlider">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>440</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="dis_bounds">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>470</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Tight bounds</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="dis_filter">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>490</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Filter texture</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="dis_filterblur">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>520</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>.003</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="dis_filterblurSlider">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>520</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="dis_filterblurLabel">
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>520</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Filter blur</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="dis_boundsDropdown">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>550</y>
+        <width>241</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Automatic</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Explicit</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="dis_boundsDropdownLabel">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>550</y>
+        <width>111</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Displacement bounds</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="dis_boundsMax">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>610</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QSlider" name="dis_boundsMaxSlider">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>610</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="dis_boundsMinLabel">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>580</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Min Value</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="dis_boundsMin">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>580</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="dis_boundsMaxLabel">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>610</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Max Value</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QSlider" name="dis_boundsMinSlider">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>580</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="round_round">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>640</y>
+        <width>171</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Enable Round Edges</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QSlider" name="round_radiusSlider">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>670</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="round_radius">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>670</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0.030</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="round_radiusLabel">
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>670</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Radius</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="user_attr">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>700</y>
+        <width>241</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="user_attrLabel">
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>700</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>User attributes</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fog_radiusLabel">
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>730</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Fog fade out radius</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QSlider" name="obj_idSlider">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>760</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="obj_idLabel">
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>760</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Object ID</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="fog_radius">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>730</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0.00</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="fog_radiusSlider">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>730</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="obj_id">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>760</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>399</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionWIKI"/>
+   </widget>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionWIKI">
+   <property name="text">
+    <string>WIKI</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

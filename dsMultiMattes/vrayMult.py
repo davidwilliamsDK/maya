@@ -6,6 +6,7 @@ reload(vmult)
 import webbrowser
 import dsCommon.dsProjectUtil as projectUtil
 reload(projectUtil)
+import maya.cmds as cmds
 
 #Decalring Paths
 dev = "dsDev"
@@ -59,8 +60,37 @@ class vrayMultTool(form_class, base_class):
         self.radioButton_objectID.clicked.connect(self.radioCheck)
         self.radioButton_multiID.clicked.connect(self.radioCheck)
 
-##        self.connect(self.actionAbout, QtCore.SIGNAL("activated(int)"), self.aboutMenu);
         self.actionID_Setup_Help.triggered.connect(self.help)
+
+        self.pushButton_noID.clicked.connect(self.noIDs)
+        self.pushButton_noMaterialID.clicked.connect(self.noIDs)
+
+    def noIDs(self):
+        sender = self.sender()
+        if sender.text() == "Select All Objects Without Object ID":
+            attr = "vrayObjectID"
+            obj = cmds.ls(ni=True, type=["nurbsSurface", "mesh"])
+        else:
+            attr = "vrayMaterialId"
+            obj = cmds.ls(type=cmds.listNodeTypes("shader"))
+
+        noID = []
+        if not obj == []:
+            for o in obj:
+                if self.selectWithID.checkState() == 0:
+                    if not cmds.objExists("%s.%s" % (o, attr)):
+                        noID.append(o)
+                else:
+                    if cmds.objExists("%s.%s" % (o, attr)):
+                        ID = int(self.spinbox[0].value())
+                        print int(self.spinbox[0].value())
+                        print cmds.getAttr("%s.%s" % (o, attr))
+                        if cmds.getAttr("%s.%s" % (o, attr)) == ID:
+                            noID.append(o)
+            if not noID == []:
+                cmds.select(noID)
+            else:
+                cmds.select(d=True)
 
     def radioCheck(self):
         if self.radioButton_objectID.isChecked():

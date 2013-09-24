@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>340</width>
-    <height>618</height>
+    <height>743</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -251,6 +251,76 @@
      <string>Use Multimatte ID</string>
     </property>
    </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>560</y>
+      <width>331</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_noMaterialID">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>620</y>
+      <width>311</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Select All Shaders Without Material ID</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_noID">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>580</y>
+      <width>311</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Select All Objects Without Object ID</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="selectWithID">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>670</y>
+      <width>321</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Only select Objects or Marterial with IDs a certain ID</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>690</y>
+      <width>251</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+     </font>
+    </property>
+    <property name="text">
+     <string>(Set the ID in the &quot;Start Index/ID Number&quot; Field)</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -258,7 +328,7 @@
      <x>0</x>
      <y>0</y>
      <width>340</width>
-     <height>26</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">

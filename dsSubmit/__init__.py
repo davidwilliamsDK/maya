@@ -418,6 +418,8 @@ class Window(base_class, form_class):
         else:
             approve = "0"
         
+        rrGroup = str(self.groupCombo.currentText())
+        
         minSeq =str(int(self.minSeqDivInput.text()))
         maxSeq = str(int(self.maxSeqDivInput.text()))
         if self.saveFileCheck.isChecked():
@@ -439,7 +441,7 @@ class Window(base_class, form_class):
                     else:
                         rrFile = self.createRRFile(shot, rl)
                     if sys.platform == "linux2":
-                        command = '/rrender/bin/lx64/rrSubmitterconsole ' + str(rrFile) +' UserName=0~' + str(dsUserName)  + ' DefaulClientGroup=0~farm Priority=2~' + str(self.prio) + ' AutoApproveJob=1~' + approve + ' SeqDivMIN=0~' + minSeq + ' SeqDivMAX=0~' + maxSeq
+                        command = '/rrender/bin/lx64/rrSubmitterconsole ' + str(rrFile) +' UserName=0~' + str(dsUserName)  + ' DefaulClientGroup=0~'+rrGroup+' Priority=2~' + str(self.prio) + ' AutoApproveJob=1~' + approve + ' SeqDivMIN=0~' + minSeq + ' SeqDivMAX=0~' + maxSeq
                         print command
                         if os.path.exists(rrFile):
                             try:
@@ -450,7 +452,7 @@ class Window(base_class, form_class):
                             self.error('ERROR:%s doesnt exists...\n%s' % (rrFile, command))
                         
                     if sys.platform == "win32": 
-                        command = '//vfx-render-server/royalrender/bin/win/rrSubmitterconsole.exe ' + str(rrFile) +' UserName=0~' + str(dsUserName)  + ' DefaulClientGroup=0~farm Priority=2~' + str(self.prio) + ' AutoApproveJob=1~' + approve + ' SeqDivMIN=0~' + minSeq + ' SeqDivMAX=0~' + maxSeq
+                        command = '//vfx-render-server/royalrender/bin/win/rrSubmitterconsole.exe ' + str(rrFile) +' UserName=0~' + str(dsUserName)  + ' DefaulClientGroup=0~'+rrGroup+' Priority=2~' + str(self.prio) + ' AutoApproveJob=1~' + approve + ' SeqDivMIN=0~' + minSeq + ' SeqDivMAX=0~' + maxSeq
                         if os.path.exists('//vfx-render-server/royalrender/bin/win/rrSubmitterconsole.exe'): 
                             print 'found rrSubmitterconsole'
                         else:
@@ -629,8 +631,6 @@ class Window(base_class, form_class):
             for option in list:
                 key, value = option.split('=')
                 config[key] = value.strip()
-                
-            #print config
             
             if config.has_key('SHOT'):
                 items = [self.shList.item(i) for i in range(self.shList.count()) if str(self.shList.item(i).text()) in config.get('SHOT')]

@@ -105,6 +105,7 @@ def exportCleanSets(subAsset=None, proxy=None, refPath=None, vraySet=0):
     print"Cleaning files ----------------------------------"
     deleteNodes()
     cleanShaders(True)
+    setRenderSettings()
     setVrayID(vraySet)
 
     #find file basename and path
@@ -293,6 +294,22 @@ def importRef():
                         cmds.lockNode(newName, l=True)
                 except:
                     pass
+
+def setRenderSettings():
+    shapes =  cmds.ls(type="mesh", long=True)
+    settings = ["castsShadows", "receiveShadows", "motionBlur", "primaryVisibility", "smoothShading", "visibleInReflections", "visibleInRefractions", "doubleSided"]
+
+    if shapes:
+        for shape in shapes:
+            for setting in settings:
+                try:
+                    cmds.setAttr("%s.%s" % (shape, setting), 1)
+                    print ("setting settings %s.%s" % (shape, setting))
+                except:
+                    print ("setting is locked %s.%s" % (shape, setting))
+                    pass
+            pass
+    pass
 
 def setVrayID(vraySet):
     try:
