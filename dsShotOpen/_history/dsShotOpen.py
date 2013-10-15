@@ -1,4 +1,5 @@
-import sys, re, os, shutil, subprocess, stat, webbrowser
+import sys, sip, re, os, shutil, subprocess, stat, webbrowser
+from PyQt4 import QtGui, QtCore, uic 
 
 if sys.platform == 'linux2':
     sys.path.append('/dsGlobal/globalMaya/Python/PyQt_Linx64')
@@ -13,42 +14,43 @@ else:
     sys.path.append(r'\\vfx-data-server\dsGlobal\dsCore\maya')
     sys.path.append(r'\\vfx-data-server\dsGlobal\dsCore\maya\dsCheck')
     uiFile = '//vfx-data-server/dsGlobal/dsCore/maya/dsShotOpen/dsShotOpenUI.ui'
-    
+
+
 import dsCommon.dsMetaDataTools as dsMDT
 import dsSQLTools as dsSQL
-import sgTools
-import dsVersionUp   
+import sgTools,dsVersionUp   
 import dsCommon.dsOsUtil as dsOsUtil;reload(dsOsUtil)
 import dsSaveScene;reload(dsSaveScene)
 
 if dsOsUtil.mayaRunning() == True:
     import maya.cmds as cmds
     import maya.OpenMayaUI as mui
-    pyVal = dsOsUtil.getPyGUI()
-  
-if pyVal == "PySide":
-    from PySide import QtCore,QtGui
-    from shiboken import wrapInstance
-    form_class, base_class = dsOsUtil.loadUiType(uiFile)
     
-if pyVal == "PyQt":
-    from PyQt4 import QtGui, QtCore, uic
-    import sip
-    form_class, base_class = uic.loadUiType(uiFile)
-
 def getMayaWindow():
-    main_window_ptr = mui.MQtUtil.mainWindow()
-    if pyVal == "PySide":
-        return wrapInstance(long(main_window_ptr), QtGui.QWidget)
-    else:
-        return sip.wrapinstance(long(main_window_ptr), QtCore.QObject)
+    'Get the maya main window as a QMainWindow instance'
+    ptr = mui.MQtUtil.mainWindow()
+    return sip.wrapinstance(long(ptr), QtCore.QObject)
 
+
+form_class, base_class = uic.loadUiType(uiFile)
 class Window(base_class, form_class):
-    def __init__(self, parent=getMayaWindow()):
-        super(Window, self).__init__(parent)
-        self.setupUi(self)
-        
+
+    try:
+        def __init__( self, parent = getMayaWindow(), *args ):
+            super( base_class, self ).__init__( parent )
+            self.run()
+            
+    except:
+        def __init__(self, parent=None):
+            base_class.__init__(self, parent)
+            self.run()
+            
+    def run(self):
+        self.setupUi( self )
         self.setObjectName( 'dsShotOpener' )
+             
+        self.setupUi(self)
+
         self.taskList = ['blocking','anim','light','effect','template']
         
         self.home = 'C:%s' % os.getenv("HOMEPATH")
@@ -83,10 +85,8 @@ class Window(base_class, form_class):
         self.scene_LW.itemDoubleClicked.connect(self.openScene)
         self.hero_RB.clicked.connect(self.init_scene)
         self.version_RB.clicked.connect(self.init_scene)
-        
         self.scene_LW.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.scene_LW.customContextMenuRequested.connect(self.openMenu)
-        
         self.connect(self.actionVfx_wiki_dk,QtCore.SIGNAL('triggered()'), lambda item=[]: self.webBrowser())
 
         self.load_config()
@@ -378,7 +378,7 @@ class Window(base_class, form_class):
     def openScene(self):
         self.init_vars()
         selectedItem = self.scene_LW.currentItem()
-        print selectedItem.text()
+        
         if selectedItem.text()[0] != "-":
             if self.tk == "all":
                 for task in self.taskList:
@@ -467,7 +467,7 @@ class Window(base_class, form_class):
         
         selectedItem = self.scene_LW.currentItem()
             
-        if selectedItem is not "":
+        if selectedItem != "":
             path = self.taskRootPath + self.tk + "/"
         else:
             path = self.taskRootPath
@@ -500,7 +500,7 @@ class Window(base_class, form_class):
         
         selectedItem = self.scene_LW.currentItem()
         
-        if selectedItem is not None:
+        if selectedItem != None:
             
             mayaScene = self.taskRootPath + self.tk + "/" + selectedItem.text()
     
@@ -813,9 +813,11 @@ class Window(base_class, form_class):
                     self.init_scene()
 
     def saveConfirmDialog(self, item):
-        reply = QtGui.QMessageBox.question(self, 'Message', "Want to to Save, before closing?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        reply = QtGui.QMessageBox.question(self, 'Message',
+            "Want to to Save, before closing?", QtGui.QMessageBox.Yes |
+            QtGui.QMessageBox.No| QtGui.QMessageBox.Cancel, QtGui.QMessageBox.No)
         
-        #print str(item)
+        print str(item)
         if reply == QtGui.QMessageBox.Yes:
             cmds.file(save=True, type='mayaAscii' )
             cmds.file(str(item), o=True, f=True)
@@ -858,7 +860,7 @@ class Window(base_class, form_class):
         menu.addMenu(mainMenu)
 
         if self.hero_RB.isChecked():
-            if not selectedItem is None:
+            if selectedItem != None:
                 openTask = mainMenu.addAction("open")
                 self.connect(openTask,QtCore.SIGNAL('triggered()'), lambda item=selectedItem: self.openScene())
     
@@ -912,16 +914,15 @@ class Window(base_class, form_class):
                     for item in self.checkScene(self.taskRootPath + "template"):
                         sceneName = templateMenu.addAction(item)
                         self.connect(sceneName,QtCore.SIGNAL('triggered()'), lambda item=item: self.createEmptyFrom(templateMenu,item))
-                        
-            menu.exec_(QtGui.QCursor.pos())
-            #action = menu.exec_(self.scene_LW.mapToGlobal(position))
+    
+            action = menu.exec_(self.scene_LW.mapToGlobal(position))
 
         if self.version_RB.isChecked():
-
-            createTask = mainMenu.addAction("Version up to Hero")
-            self.connect(createTask,QtCore.SIGNAL('triggered()'), lambda item=selectedItem: self.VersionToHero())
+            if selectedItem != None:
+                createTask = mainMenu.addAction("Version up to Hero")
+                self.connect(createTask,QtCore.SIGNAL('triggered()'), lambda item=selectedItem: self.VersionToHero())
                 
-            menu.exec_(QtGui.QCursor.pos())
+                action = menu.exec_(self.scene_LW.mapToGlobal(position))
 
     def closeEvent(self,event):
         self.save_config()
@@ -1015,8 +1016,12 @@ class Window(base_class, form_class):
                             )
         return proc
 
+if __name__ == "__main__":
+    app = QtGui.QApplication(sys.argv)
+    myWindow = Window()
+    myWindow.show()
+    sys.exit(app.exec_())
 
-        
 def dsShotOpen():
     global myWindow
     myWindow = Window()

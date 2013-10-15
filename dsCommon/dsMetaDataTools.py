@@ -1,4 +1,4 @@
-import os,sys,re,subprocess
+import os,sys,re,subprocess,string
 
 '''
 import dsCommon.dsMetaDataTools as dsMDT
@@ -22,28 +22,49 @@ if sys.platform == 'linux2':
 else:
     sys.path.append('//192.168.0.161/dsGlobal/dsCore/shotgun')
 import sgTools
-
-def shotCheck():
-    shotList = cmds.ls(type = "shot")
-    for shot in shotList:
-        shotNode = shot
-        shotNodeName = cmds.getAttr(shot + ".shotName")
-        if shotNode != shotNodeName:
-            print "shotName is not the same as the shotNodeName"
-            cmds.rename(shotNode,shotNodeName)
-
+    
 def sceneCheck():
-    sgTask = cmds.getAttr("dsMetaData.sgTask")
     tmpPath = cmds.file(q=True,l=True)[0]
-    shotCheck()
-    if not re.search(sgTask,tmpPath):
-        try:
-            updatedsMD()
-            "dsMetaData node updated... please save"
-            save = cmds.file(save=True, force=True)
-        except:
-            pass
-        
+    tmpSplit = tmpPath.split("/")
+    
+    x = 0
+    for s in tmpSplit:
+        if s == "film":
+            fpProj = tmpSplit[x-1]
+            fpEpi = tmpSplit[x+1]
+    
+        if s == "3D":
+            fpSeq = tmpSplit[x-1]
+            fpTask = tmpSplit[x+1]
+        x = x + 1
+    
+    mdProj = cmds.getAttr("dsMetaData.Project")
+    mdEpi = cmds.getAttr("dsMetaData.Episode")
+    mdSeq = cmds.getAttr("dsMetaData.Sequence")
+    mdTask = cmds.getAttr("dsMetaData.sgTask")
+    mdFPS = cmds.getAttr("dsMetaData.FPS")
+    mdResH = cmds.getAttr("dsMetaData.ResolutionHeight")
+    mdResW = cmds.getAttr("dsMetaData.ResolutionWidth")
+    mdUser = cmds.getAttr("dsMetaData.User")
+    
+    if fpProj != mdProj:
+        print "Proj is not set correct"
+        initMDNode()
+        if fpEpi != mdEpi:
+            print "Epi is not set correct"
+            initMDNode()
+            if fpSeq != mdSeq:
+                print "Seq is not set correct"
+                initMDNode()
+                if fpTask != mdTask:
+                    print "task is not set correct"
+                    initMDNode()
+                    #if mdFPS == 0 or mdFPS == "":
+                    #    print "FPS is not set correct"
+                    #    initMDNode()
+                else:
+                    print "Good to go"
+                        
 def versionCheck():
     currentHeroVersion = cmds.getAttr("dsMetaData.Version")
     currentTask = cmds.getAttr("dsMetaData.sgTask")
@@ -58,9 +79,6 @@ def versionCheck():
     fileName = cmds.file(q=True,sn=True,shn=True)
     
     rootTaskPath = fullPath.replace(fileName,"")
-    
-    #print rootTaskPath
-    #print rootTaskPath + "version/" + fileName
 
 def initMDNode():
     if cmds.ls("dsMetaData"):
@@ -149,10 +167,18 @@ def updatedsMD():
     rSplit = rez.split("x")
     rezW = int(rSplit[0])
     rezH = int(rSplit[-1])
-    seq = sgTools.sgGetSequence(seqName,projName,epiName,['id'])
-    seqID = seq['id']
-
+    
+    seqVal =  re.search("q[0-9][0-9][0-9][0-9]",fullPath).group()
+    if seqName == seqVal:
+        seq = sgTools.sgGetSequence(seqName,projName,epiName,['id'])
+        seqID = seq['id']
+    else:
+        print "######################################"
+        print "sequence Error Please talk with David"
+        print "######################################"
+        
     tasks = sgTools.sgGetSeqTasks(seqID,['step','content','id'])
+    print tasks
 
     if re.search("3D",fullPath):
         for index, obj in enumerate(pathTmp):
@@ -164,15 +190,13 @@ def updatedsMD():
             if re.search("q[0-9][0-9][0-9][0-9]",obj):
                 next = pathTmp[index]
         task = next
-
+        
+    seqTaskID = "none"
     for t in tasks:
         if t['step']['name'] == task:
             seqTaskID = t['id']
             taskID = t['step']['id']
             break
-        else:
-            seqTaskID = "none"
-
     try:
         userOBJ = sgTools.sgGetTask(taskID,['task_assignees','entity'])
         user =  userOBJ['task_assignees'][0]['name']
@@ -243,14 +267,16 @@ def updateShotAttrs(dsShot,task,seqID,seqName,projName,epiName):
         version = "v000"
     except:
         user = "not assigned"
-        version = "none"
-
-    cmds.setAttr('dsMetaData.'+str(dsShot)+'_shotID',shotID)
-    cmds.setAttr('dsMetaData.'+str(dsShot)+'_shotStart',startVal)
-    cmds.setAttr('dsMetaData.'+str(dsShot)+'_shotEnd',endVal)
-    cmds.setAttr('dsMetaData.'+str(dsShot)+'_shotTaskName',dsTask,type="string")
-    cmds.setAttr('dsMetaData.'+str(dsShot)+'_shotTaskID',shotTaskID)
-    cmds.setAttr('dsMetaData.'+str(dsShot)+'_User',user,type="string")
+        version = "none"    
+    try:
+        cmds.setAttr('dsMetaData.'+str(dsShot)+'_shotID',shotID)
+        cmds.setAttr('dsMetaData.'+str(dsShot)+'_shotStart',startVal)
+        cmds.setAttr('dsMetaData.'+str(dsShot)+'_shotEnd',endVal)
+        cmds.setAttr('dsMetaData.'+str(dsShot)+'_shotTaskName',dsTask,type="string")
+        cmds.setAttr('dsMetaData.'+str(dsShot)+'_shotTaskID',shotTaskID)
+        cmds.setAttr('dsMetaData.'+str(dsShot)+'_User',user,type="string")
+    except:
+        pass
 
 def connectReferences(dsMDNode,reference,refFile):
     if cmds.objExists(reference + ":Geo_Grp.dsMD"):

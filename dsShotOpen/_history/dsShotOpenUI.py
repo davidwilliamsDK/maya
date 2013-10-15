@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
         MainWindow.resize(452, 681)
         MainWindow.setMinimumSize(QtCore.QSize(452, 681))
         MainWindow.setMaximumSize(QtCore.QSize(452, 681))
-        MainWindow.setTabShape(QtGui.QTabWidget.Rounded)
+        #MainWindow.setTabShape(QtGui.QTabWidget.Rounded)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)

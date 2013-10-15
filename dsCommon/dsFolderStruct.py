@@ -95,34 +95,23 @@ def testType(val,tmppath):
         changePath(tmppath, val)
         
 def dsCreateFs(TYPE,path,name):
-    if platform.system() == "Linux":
-        if TYPE == "COMP":
-            XMLPath ='/dsGlobal/dsCore/tools/dsProjectCreate/compWorkflow.xml'
-        if TYPE == "3D":
-            XMLPath ='/dsGlobal/dsCore/tools/dsProjectCreate/3DWorkflow.xml'
-        if TYPE == "PROJECT":
-            XMLPath ='/dsGlobal/dsCore/tools/dsProjectCreate/project.xml'
-            resources = '/dsGlobal/globalTools/ressources/.local'
-        if TYPE == "EPISODE":
-            XMLPath ='/dsGlobal/dsCore/tools/dsProjectCreate/episode.xml'
-            
-    if platform.system() == "Windows":
-        if TYPE == "COMP":
-            XMLPath = '//vfx-data-server/dsGlobal/dsCore/tools/dsProjectCreate/compWorkflow.xml'
-        if TYPE == "3D":
-            XMLPath ='//vfx-data-server/dsGlobal/dsCore/tools/dsProjectCreate/3DWorkflow.xml'
-        if TYPE == "PROJECT":
-            XMLPath ='//vfx-data-server/dsGlobal/dsCore/tools/dsProjectCreate/project.xml'
-            resources ='//vfx-data-server/dsGlobal/globalTools/ressources/.local'
-        if TYPE == "EPISODE":
-            XMLPath ='//vfx-data-server/dsGlobal/dsCore/tools/dsProjectCreate/episode.xml'
+
+    if TYPE == "COMP":
+        XMLPath = '//vfx-data-server/dsGlobal/dsCore/tools/dsProjectCreate/compWorkflow.xml'
+    if TYPE == "3D":
+        XMLPath ='//vfx-data-server/dsGlobal/dsCore/tools/dsProjectCreate/3DWorkflow.xml'
+    if TYPE == "PROJECT":
+        XMLPath ='//vfx-data-server/dsGlobal/dsCore/tools/dsProjectCreate/project.xml'
+        resources ='//vfx-data-server/dsGlobal/globalTools/ressources/local'
+    if TYPE == "EPISODE":
+        XMLPath ='//vfx-data-server/dsGlobal/dsCore/tools/dsProjectCreate/episode.xml'
 
     ''' Creates folder structure from XML'''
     root = ET.parse(XMLPath).getroot()
     
     if TYPE == "PROJECT" or TYPE == "EPISODE":
         pathNew = path + name + "/"
-        if testDir(pathNew) == False:
+        if testDir(pathNew) == False:           
             for parent in root.getchildren():
                 testType(parent.attrib['type'],pathNew + parent.attrib['name'])
                 for child in parent.getchildren():
@@ -130,11 +119,15 @@ def dsCreateFs(TYPE,path,name):
                     for subchild in child.getchildren():
                         testType(subchild.attrib['type'],pathNew + parent.attrib['name'] +"/"+ child.attrib['name'] +"/"+ subchild.attrib['name'])
                         for subsubchild in subchild.getchildren():
-                            testType(subsubchild.attrib['type'],pathNew + parent.attrib['name'] +"/"+ child.attrib['name'] + "/"+ subchild.attrib['name']+ "/"+ subsubchild.attrib['name'])                  
+                            testType(subsubchild.attrib['type'],pathNew + parent.attrib['name'] +"/"+ child.attrib['name'] + "/"+ subchild.attrib['name']+ "/"+ subsubchild.attrib['name'])       
+                            
+       
             print "created Folder structure for " + name
         else:
             print "Project or Episode folder structure for " + pathNew + " already exits!!"
 
+    if TYPE == "PROJECT":
+        shutil.copytree(resources,str(path) + str(name)  + "/.local") 
 
     if TYPE == "3D":
         pathTest = path + name + "/3D/"

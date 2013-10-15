@@ -1,23 +1,35 @@
 import sys
-import sip
 import maya.OpenMayaUI as mui
-from PyQt4 import QtGui, QtCore, uic
-
-def getMayaWindow():
-    'Get the maya main window as a QMainWindow instance'
-    ptr = mui.MQtUtil.mainWindow()
-    return sip.wrapinstance(long(ptr), QtCore.QObject)
+import dsCommon.dsOsUtil as dsOsUtil
 
 if sys.platform == "linux2":
     uiFile = '/dsGlobal/dsCore/maya/dsError/ui.ui'
 else:
     uiFile = '//vfx-data-server/dsGlobal/dsCore/maya/dsError/ui.ui'
- 
-form_class, base_class = uic.loadUiType(uiFile)
+    
+pyVal = dsOsUtil.getPyGUI()
 
-class dsErrorUI(base_class, form_class):
-    def __init__(self, error = None, parent=getMayaWindow()):
-        super(base_class, self).__init__(parent)
+if pyVal == "PySide":
+    from PySide import QtCore,QtGui
+    from shiboken import wrapInstance
+    form_class, base_class = dsOsUtil.loadUiType(uiFile)
+    
+if pyVal == "PyQt":
+    from PyQt4 import QtGui, QtCore, uic
+    import sip
+    form_class, base_class = uic.loadUiType(uiFile)
+
+def getMayaWindow():
+    main_window_ptr = mui.MQtUtil.mainWindow()
+    if pyVal == "PySide":
+        return wrapInstance(long(main_window_ptr), QtGui.QWidget)
+    else:
+        return sip.wrapinstance(long(main_window_ptr), QtCore.QObject)
+
+class Window(base_class, form_class):
+
+    def __init__(self, parent=getMayaWindow()):
+        super(Window, self).__init__(parent)
         self.setupUi(self)
         self.error = error
         if self.error:
@@ -30,7 +42,8 @@ class dsErrorUI(base_class, form_class):
     def clear(self):
         self.textEdit.clear()
     
-def error(error=None):
-    global something
-    something = dsErrorUI(error)
-    something.show()
+    
+def dsErrorUI(error=None):
+    global myWindow
+    myWindow = Window()
+    myWindow.show()

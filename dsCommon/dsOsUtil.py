@@ -2,6 +2,44 @@ import os
 import platform
 import subprocess
 
+
+def getPyGUI():
+    if mayaRunning():
+        try:
+            from PySide import QtCore,QtGui
+            from shiboken import wrapInstance
+            return "PySide"
+
+        except:
+            from PyQt4 import QtGui, QtCore, uic
+            import sip
+            return "PyQt"
+    else:
+        return "PyQt"
+
+def loadUiType(uiFile):
+    if mayaRunning():
+        import pysideuic
+        import xml.etree.ElementTree as xml
+        from cStringIO import StringIO
+        from PySide import QtCore,QtGui
+
+    parsed = xml.parse(uiFile)
+    widget_class = parsed.find('widget').get('class')
+    form_class = parsed.find('class').text
+
+    with open(uiFile, 'r') as f:
+        o = StringIO()
+        frame = {}
+
+        pysideuic.compileUi(f, o, indent=0)
+        pyc = compile(o.getvalue(), '<string>', 'exec')
+        exec pyc in frame
+        form_class = frame['Ui_%s'%form_class]
+        base_class = eval('QtGui.%s'%widget_class)
+    return form_class, base_class
+
+
 def listFolder(path, exception=["_", "-", "."]):
     print path
     dirs = []

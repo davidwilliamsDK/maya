@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>452</width>
+    <width>694</width>
     <height>681</height>
    </rect>
   </property>
@@ -18,100 +18,36 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>452</width>
+    <width>1000</width>
     <height>681</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>dsShotOpen</string>
   </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
   <property name="tabShape">
    <enum>QTabWidget::Rounded</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <layout class="QGridLayout" name="gridLayout">
-    <property name="verticalSpacing">
-     <number>0</number>
+    <property name="horizontalSpacing">
+     <number>4</number>
     </property>
-    <item row="17" column="0">
-     <widget class="QSplitter" name="splitter">
-      <property name="minimumSize">
-       <size>
-        <width>201</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>203</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="lineWidth">
-       <number>0</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="opaqueResize">
-       <bool>true</bool>
-      </property>
-      <property name="handleWidth">
-       <number>1</number>
-      </property>
-      <widget class="QPushButton" name="ref_B">
-       <property name="minimumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>ref</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="import_B">
-       <property name="minimumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>import</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="retire_B">
-       <property name="minimumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>67</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>retire</string>
-       </property>
-      </widget>
-     </widget>
-    </item>
+    <property name="verticalSpacing">
+     <number>1</number>
+    </property>
+    <property name="margin">
+     <number>2</number>
+    </property>
     <item row="0" column="0">
      <widget class="QLabel" name="user_L">
       <property name="maximumSize">
@@ -132,47 +68,125 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="0">
-     <widget class="QComboBox" name="sequence_CB">
-      <property name="minimumSize">
-       <size>
-        <width>150</width>
-        <height>0</height>
-       </size>
-      </property>
-     </widget>
+    <item row="0" column="1" rowspan="20">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QSplitter" name="splitter_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="opaqueResize">
+         <bool>true</bool>
+        </property>
+        <property name="childrenCollapsible">
+         <bool>true</bool>
+        </property>
+        <widget class="QLabel" name="scene_L">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Scene:</string>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="hero_RB">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>55</width>
+           <height>17</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>47</width>
+           <height>17</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Hero</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="version_RB">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>55</width>
+           <height>17</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>47</width>
+           <height>17</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Version</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListWidget" name="scene_LW">
+        <property name="minimumSize">
+         <size>
+          <width>211</width>
+          <height>400</height>
+         </size>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>550</width>
+          <height>550</height>
+         </size>
+        </property>
+        <property name="spacing">
+         <number>5</number>
+        </property>
+        <property name="gridSize">
+         <size>
+          <width>1</width>
+          <height>25</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
-    <item row="15" column="0">
-     <widget class="QPushButton" name="versionUp_B">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
+    <item row="1" column="0">
+     <widget class="QComboBox" name="user_CB">
       <property name="minimumSize">
        <size>
-        <width>201</width>
-        <height>31</height>
+        <width>199</width>
+        <height>20</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>201</width>
-        <height>31</height>
+        <height>20</height>
        </size>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Version Up</string>
       </property>
      </widget>
     </item>
@@ -200,76 +214,26 @@
      <widget class="QComboBox" name="projects_CB">
       <property name="minimumSize">
        <size>
-        <width>150</width>
-        <height>0</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="18" column="0">
-     <widget class="QPushButton" name="notate_B">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>201</width>
-        <height>31</height>
+        <width>199</width>
+        <height>20</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>201</width>
-        <height>31</height>
+        <height>20</height>
        </size>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Notate Scene</string>
       </property>
      </widget>
     </item>
-    <item row="11" column="0">
-     <widget class="QListWidget" name="shots_LW">
-      <property name="minimumSize">
-       <size>
-        <width>195</width>
-        <height>184</height>
-       </size>
-      </property>
+    <item row="4" column="0">
+     <widget class="QLabel" name="episode_L">
       <property name="maximumSize">
        <size>
-        <width>195</width>
-        <height>184</height>
+        <width>201</width>
+        <height>26</height>
        </size>
       </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
-      </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="0">
-     <widget class="QLabel" name="task_L">
       <property name="font">
        <font>
         <pointsize>10</pointsize>
@@ -278,124 +242,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Task:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="0">
-     <widget class="QLabel" name="shots_L">
-      <property name="text">
-       <string>Shots In Sequence:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="0">
-     <widget class="QComboBox" name="task_CB">
-      <property name="minimumSize">
-       <size>
-        <width>150</width>
-        <height>0</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" rowspan="22">
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="scene_L">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>9</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Scene:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QRadioButton" name="hero_RB">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>55</width>
-          <height>17</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>47</width>
-          <height>17</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Hero</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QRadioButton" name="version_RB">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>55</width>
-          <height>17</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>47</width>
-          <height>17</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Version</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="4">
-       <widget class="QListWidget" name="scene_LW">
-        <property name="minimumSize">
-         <size>
-          <width>211</width>
-          <height>400</height>
-         </size>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>100</width>
-          <height>500</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0">
-     <widget class="QComboBox" name="user_CB">
-      <property name="minimumSize">
-       <size>
-        <width>150</width>
-        <height>0</height>
-       </size>
+       <string>Episode:</string>
       </property>
      </widget>
     </item>
@@ -403,8 +250,14 @@
      <widget class="QComboBox" name="episodes_CB">
       <property name="minimumSize">
        <size>
-        <width>150</width>
-        <height>0</height>
+        <width>199</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>201</width>
+        <height>20</height>
        </size>
       </property>
      </widget>
@@ -429,14 +282,24 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="episode_L">
+    <item row="7" column="0">
+     <widget class="QComboBox" name="sequence_CB">
+      <property name="minimumSize">
+       <size>
+        <width>199</width>
+        <height>20</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
         <width>201</width>
-        <height>26</height>
+        <height>20</height>
        </size>
       </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="task_L">
       <property name="font">
        <font>
         <pointsize>10</pointsize>
@@ -445,30 +308,62 @@
        </font>
       </property>
       <property name="text">
-       <string>Episode:</string>
+       <string>Task:</string>
       </property>
      </widget>
     </item>
-    <item row="19" column="0">
-     <widget class="QPushButton" name="sg_B">
+    <item row="9" column="0">
+     <widget class="QComboBox" name="task_CB">
       <property name="minimumSize">
        <size>
-        <width>201</width>
-        <height>31</height>
+        <width>199</width>
+        <height>20</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>201</width>
-        <height>31</height>
+        <height>20</height>
        </size>
-      </property>
-      <property name="text">
-       <string>SHOTGUN</string>
       </property>
      </widget>
     </item>
-    <item row="14" column="0">
+    <item row="10" column="0">
+     <widget class="QLabel" name="shots_L">
+      <property name="text">
+       <string>file Info:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QListWidget" name="shots_LW">
+      <property name="minimumSize">
+       <size>
+        <width>201</width>
+        <height>75</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>201</width>
+        <height>75</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="0">
      <widget class="QPushButton" name="createEmpty_B">
       <property name="enabled">
        <bool>true</bool>
@@ -502,7 +397,231 @@
       </property>
      </widget>
     </item>
-    <item row="21" column="0">
+    <item row="13" column="0">
+     <widget class="QPushButton" name="versionUp_B">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Version Up</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="0">
+     <widget class="QPushButton" name="saveAs_B">
+      <property name="minimumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>SaveAS</string>
+      </property>
+     </widget>
+    </item>
+    <item row="15" column="0">
+     <widget class="QSplitter" name="splitter">
+      <property name="minimumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="handleWidth">
+       <number>1</number>
+      </property>
+      <widget class="QPushButton" name="ref_B">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>ref</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="import_B">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>99</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>import</string>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item row="16" column="0">
+     <widget class="QSplitter" name="splitter_2">
+      <property name="minimumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="opaqueResize">
+       <bool>true</bool>
+      </property>
+      <property name="handleWidth">
+       <number>1</number>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="QPushButton" name="export_B">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>export Selected</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="retire_B">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>99</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>retire</string>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item row="17" column="0">
+     <widget class="QPushButton" name="notate_B">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Notate Scene</string>
+      </property>
+     </widget>
+    </item>
+    <item row="18" column="0">
+     <widget class="QPushButton" name="sg_B">
+      <property name="minimumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>201</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>SHOTGUN</string>
+      </property>
+     </widget>
+    </item>
+    <item row="19" column="0">
      <widget class="QPushButton" name="explorer_B">
       <property name="enabled">
        <bool>true</bool>
@@ -536,19 +655,6 @@
       </property>
      </widget>
     </item>
-    <item row="16" column="0">
-     <widget class="QPushButton" name="saveAs_B">
-      <property name="minimumSize">
-       <size>
-        <width>201</width>
-        <height>31</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>SaveAS</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -556,7 +662,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>452</width>
+     <width>694</width>
      <height>18</height>
     </rect>
    </property>
@@ -568,7 +674,7 @@
    </widget>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionVfx_wiki_dk">
    <property name="text">
     <string>wiki</string>

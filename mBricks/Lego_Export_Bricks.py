@@ -202,7 +202,7 @@ class legoExport:
             #icon = "C:\Users\Per\Documents\Test\Empty.png"
             #dir = path
             #dirIcon = path
-            path = '/dsPipe/Library/asset/3D/Bricks/mBricks/'
+            path = '/dsPipe/Library/asset/3D/lego/mBrick/'
             icon = '/dsPipe/Library/.local/Resources/Icons/Empty.png'
             dir = path + meshName + '/dev/maya/'
             dirIcon = path + meshName + '/images/icon/'

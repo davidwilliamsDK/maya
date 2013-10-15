@@ -36,6 +36,8 @@ def dsPartition(partitions,start,end):
             print part
             part = part + 1
 
+
+
 def furyGroup(grpName):
     sParticleList = []
     furyList = cmds.ls(type="FuryEmitter")

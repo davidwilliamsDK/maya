@@ -1,32 +1,42 @@
-import sys, sip, re, os, webbrowser
-from PyQt4 import QtGui, QtCore, uic
-import dsLight
-reload(dsLight)
+import sys, re, os, webbrowser
+import dsLight;reload(dsLight)
+import dsCommon.dsOsUtil as dsOsUtil
+reload(dsOsUtil)
 
-import dsLSResourceUI
-reload(dsLSResourceUI)
-
-def getMayaWindow():
-    'Get the maya main window as a QMainWindow instance'
-    ptr = mui.MQtUtil.mainWindow()
-    return sip.wrapinstance(long(ptr), QtCore.QObject)
-
-import maya.cmds as cmds
-import maya.OpenMayaUI as mui
+import dsLSResourceUI;reload(dsLSResourceUI)
 
 if sys.platform == "linux2":
     uiFile = '/dsGlobal/dsCore/maya/dsLight/dsLS.ui'
     presetPath = '/dsPipe/Library/asset/3D/LightSetup/presets'
 else:
     uiFile = '//vfx-data-server/dsGlobal/dsCore/maya/dsLight/dsLS.ui'
-    presetPath = r'\\vfx-data-server\dsPipe\Library\asset\3D\LightSetup\presets'
+    presetPath = r'\\vfx-data-server\dsPipe\Library_old\asset\3D\LightSetup\presets'
     
+import maya.cmds as cmds
+import maya.OpenMayaUI as mui
+pyVal = dsOsUtil.getPyGUI()
+
+if pyVal == "PySide":
+    from PySide import QtCore,QtGui
+    from shiboken import wrapInstance
+    form_class, base_class = dsOsUtil.loadUiType(uiFile)
     
-form_class, base_class = uic.loadUiType(uiFile)
+if pyVal == "PyQt":
+    from PyQt4 import QtGui, QtCore, uic
+    import sip
+    form_class, base_class = uic.loadUiType(uiFile)
+
+def getMayaWindow():
+    main_window_ptr = mui.MQtUtil.mainWindow()
+    if pyVal == "PySide":
+        return wrapInstance(long(main_window_ptr), QtGui.QWidget)
+    else:
+        return sip.wrapinstance(long(main_window_ptr), QtCore.QObject)
 
 class Window(base_class, form_class):
     def __init__(self, parent=getMayaWindow()):
-        super(base_class, self).__init__(parent)
+        super(Window, self).__init__(parent)
+        
         self.setupUi(self)
         
         self.updatePresets()
@@ -131,6 +141,10 @@ class Window(base_class, form_class):
         webbrowser.open(url,new=new)
         
 def dsLS():
-    global myWindow
-    myWindow = Window()
-    myWindow.show()
+    global dsLSWindow
+    try:
+        dsLSWindow.close()
+    except:
+        pass
+    dsLSWindow = Window()
+    dsLSWindow.show()

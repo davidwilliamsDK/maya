@@ -1,57 +1,54 @@
 #import os, sip, re, sys, shutil, subprocess
-print 'v1.0.6,', 
+print 'v1.0.7,', 
 
 """
+v1.0.7
+-------------------
+ - added support for Pyside
+ - added render options for all file types and maya files
 v1.0.6
 -------------------
  - Added min and max Sequence divide to the gui, and to the config.
  - And to the rrSubmitter command line.
 
-v1.0.5
--------------------
- - Fixed self.getLastestVersion to check publish3D versions instead
- - Added self.mayaSave to self.submitRR
- - change self.getRenderScene to check for renderVersion inside
- the publish3D folder on dsPipe. 
-
 """
 
-import sys
-import sip
-import re
-import os
-import shutil
-import subprocess
-from PyQt4 import QtGui, QtCore, uic
-import dsError
-reload(dsError)
-
-try:
-    import maya.cmds as cmds
-    import maya.OpenMayaUI as mui
-except:
-    pass
-
-def getMayaWindow():
-    'Get the maya main window as a QMainWindow instance'
-    ptr = mui.MQtUtil.mainWindow()
-    return sip.wrapinstance(long(ptr), QtCore.QObject)
+import sys, re, os, shutil, subprocess, webbrowser
+import dsCommon.dsOsUtil as dsOsUtil
+reload(dsOsUtil)
 
 if sys.platform == "linux2":
     uiFile = '/dsGlobal/dsCore/maya/dsSubmit/dsSubmit.ui'
 else:
     uiFile = '//vfx-data-server/dsGlobal/dsCore/maya/dsSubmit/dsSubmit.ui'
- 
-form_class, base_class = uic.loadUiType(uiFile)
 
+if dsOsUtil.mayaRunning() == True:
+    import maya.cmds as cmds
+    import maya.OpenMayaUI as mui 
+    pyVal = dsOsUtil.getPyGUI()
+
+if pyVal == "PySide":
+    from PySide import QtCore,QtGui
+    from shiboken import wrapInstance
+    form_class, base_class = dsOsUtil.loadUiType(uiFile)
+    
+if pyVal == "PyQt":
+    from PyQt4 import QtGui, QtCore, uic
+    import sip
+    form_class, base_class = uic.loadUiType(uiFile)
+
+def getMayaWindow():
+    main_window_ptr = mui.MQtUtil.mainWindow()
+    if pyVal == "PySide":
+        return wrapInstance(long(main_window_ptr), QtGui.QWidget)
+    else:
+        return sip.wrapinstance(long(main_window_ptr), QtCore.QObject)
+    
 class Window(base_class, form_class):
-    '''GI ONLY WORKS ON ASCII AND NOT MAYA BINARY'''
     def __init__(self, parent=getMayaWindow()):
-        '''A custom window with a demo set of ui widgets'''
-        super(base_class, self).__init__(parent)
+        super(Window, self).__init__(parent)
         self.setupUi(self)
         
-        self.dsError = dsError.dsErrorUI()
         self.refresh()
         
         if sys.platform == "linux2":
@@ -687,8 +684,13 @@ class Window(base_class, form_class):
         
         self.load_config()
         return self.config_path
+
     
 def dsSubmit():
-    global myWindow
-    myWindow = Window()
-    myWindow.show()
+    global submitWindow
+    try:
+        submitWindow.close()
+    except:
+        pass
+    submitWindow = Window()
+    submitWindow.show()

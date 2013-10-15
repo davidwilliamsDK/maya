@@ -44,8 +44,8 @@ class legoReplace:
             pass
     def Rebuild(self):
         try:
-            libraryPath = '/dsPipe/Library/asset/3D/lego/mBrick/'
-            texturePath = '/dsPipe/Library/asset/3D/lego/mBrick/LEGO_Colors/'
+            libraryPath = '/dsPipe/Library/asset/3D/Bricks/mBricks/'
+            texturePath = '/dsPipe/Library/asset/3D/Bricks/LEGO_Colors/'
             #libraryPath = 'C:\Users\Per\Documents\Test'
             #print 'libraryPath='+libraryPath
             try:

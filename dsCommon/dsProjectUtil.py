@@ -54,6 +54,7 @@ if platform == "Windows":
     minifigTemplatePath = "/.local/resources/minifig"
     minifigTemplateName = "minifig"
     shotLetter = "s"
+    library = "Library"
 
 
     projectInit = "\.local\config.xml"
@@ -77,8 +78,12 @@ if platform == "Linux":
     minifigTemplatePath = "/.local/resources/minifig"
     minifigTemplateName = "minifig"
     shotLetter = "s"
+    library = "Library"
 
     projectInit = "/.local/config.xml"
+
+def libraryPath():
+    return pipePath + library
 
 def abcCachePath():
     return "data/abc"

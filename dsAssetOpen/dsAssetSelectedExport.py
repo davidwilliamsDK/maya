@@ -6,7 +6,7 @@ import dsCommon.dsOsUtil as osUtil
 reload(osUtil)
 
 def handler(projInfo=None):
-    print cmds.file(q=True, location=True)
+    scenePath = cmds.file(q=True, location=True)
     #Varibles
     keepNode = "Rig_Grp"
     subAssetName = "Render_Set"
@@ -14,6 +14,9 @@ def handler(projInfo=None):
     tiledEXR ="False"
     subAssets = None
     vrayID = 1
+
+    cmds.select(keepNode)
+    keepNode = cmds.ls(sl=True, long=True)[0]
 
     #Remove all Locked Nodes
     lockedNodes = cmds.ls(lockedNodes=True)
@@ -35,6 +38,7 @@ def handler(projInfo=None):
     #Import File
     cmds.select(all=True)
     topN = cmds.ls(sl=True, type="transform")
+    print "Tope nodes"
     print topN
 
     path = cmds.file(q=True, location=True).rsplit("Rig", 1)[0]
@@ -44,6 +48,11 @@ def handler(projInfo=None):
     nodes = cmds.ls(sl=True, type="transform")
     print nodes
     newNodes = list(set(nodes) - set(topN))
+    if keepNode in newNodes:
+        print "keepNode in newNodes!!!!!!!!!!"
+        newNodes.remove(keepNode)
+
+    cmds.select(keepNode)
 
     #Center To World
     cmds.select(newNodes)
@@ -54,16 +63,20 @@ def handler(projInfo=None):
     cmds.select(geo)
     #xform = cmds.xform(q=True, boundingBox=True)
     xform = cmds.polyEvaluate(b=True)
-    grp = cmds.group(em=True, n="Geo_Grp")
+    cmds.group(em=True, n="Geo_Grp")
+    grp = cmds.ls(sl=True, long=True)[0]
     print grp
+
     cmds.delete(cmds.pointConstraint(geo, grp, mo=False))
     print xform
     cmds.setAttr("%s.translateY" % grp, xform[1][0])
     cmds.parent(newNodes, grp)
 
+
     cmds.setAttr("%s.translateX" % grp, 0)
     cmds.setAttr("%s.translateY" % grp, 0)
     cmds.setAttr("%s.translateZ" % grp, 0)
+    cmds.select(keepNode)
 
     cmds.parent(grp, keepNode)
     try:
@@ -86,13 +99,14 @@ def handler(projInfo=None):
             cmds.setAttr("%s.fileTextureName" % tex, "%s/%s" % (texturePath, filename.rsplit("/", 1)[-1]), type="string")
 
     #Create Selection Set For Publishing
-    cmds.select(keepNode)
     subSet = cmds.sets(name=subAssetName)
     cmds.addAttr(subAssetName, at="message", ln=messageAttr)
     cmds.connectAttr("%s.%s" % (keepNode, messageAttr), "%s.%s" % (subAssetName, messageAttr))
 
     #Publish
+    cmds.file(rename=scenePath)
     cmds.file(s=True)
+    print "file Saved"
     refPath = cmds.file(q=True, location=True).rsplit("/dev/maya/", 1)[0] + "/ref/"
     melCmd = ('source publishAssetBatch; exportBatchProcedures "%s" "%s" "%s" "%s" "%s";' % (subAssets, subAssetName, refPath, vrayID, tiledEXR))
     if str(osUtil.listOS()) == "Linux":

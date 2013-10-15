@@ -33,6 +33,12 @@ reload(dsOsUtil)
 import dsCommon.dsProjectUtil as dsProjectUtil
 reload(dsProjectUtil)
 
+try:
+    import dsSgUtil as sgBridge
+    reload(sgBridge)
+except:
+    pass
+
 if dsOsUtil.mayaRunning() == True:
     import maya.app.general.createImageFormats as createImageFormats
     import maya.cmds as cmds
@@ -50,7 +56,6 @@ class MyForm(QtGui.QMainWindow):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_AssetWindow()
         self.ui.setupUi(self)
-        self.sgLoaded = 0
 
         #For action, run def
         QtCore.QObject.connect(self.ui.productionComboBox, QtCore.SIGNAL("activated(int)"), self.assetTypeUpdate);
@@ -77,9 +82,6 @@ class MyForm(QtGui.QMainWindow):
         self.ui.actionExit.triggered.connect(self.exitWidget)
 
         self.ui.menuHelp.triggered.connect(self.helpWiki)
-
-        QtCore.QObject.connect(self.ui.filterTextEdit, QtCore.SIGNAL("returnPressed()"), self.filterAssets);
-        QtCore.QObject.connect(self.ui.wrapCheckBox, QtCore.SIGNAL("stateChanged(int)"), self.wrapIcons);
 
         #Shotgun
         self.ui.actionReloadTemplates.triggered.connect(self.listTemplates)
@@ -124,48 +126,6 @@ class MyForm(QtGui.QMainWindow):
             self.ui.incrPushButton.setEnabled(False)
             self.ui.createSelectionPushButton.setEnabled(False)
 
-    def wrapIcons(self, onOff=2, use=True):
-        print use
-        print onOff
-        if use:
-            if onOff == 2:
-                self.ui.assetListWidget.setResizeMode(QtGui.QListView.Adjust)
-                self.ui.assetListWidget.setViewMode(QtGui.QListView.IconMode)
-            else:
-                self.ui.assetListWidget.setResizeMode(QtGui.QListView.Fixed)
-                self.ui.assetListWidget.setViewMode(QtGui.QListView.ListMode)
-        else:
-            self.ui.assetListWidget.setResizeMode(QtGui.QListView.Fixed)
-            self.ui.assetListWidget.setViewMode(QtGui.QListView.ListMode)
-
-    def filterAssets(self):
-        filterName = self.ui.filterTextEdit.text()
-        remove = 0
-        if not filterName == "":
-            print filterName
-            for i in range(self.ui.assetListWidget.count()):
-                item = self.ui.assetListWidget.item(i-remove)
-                if not filterName in item.text():
-                    #print item.text()
-                    self.ui.assetListWidget.takeItem(self.ui.assetListWidget.row(item))
-                    remove = remove + 1
-
-            print "filter assets"
-        else:
-            self.assetListUpdate()
-
-    def loadSgBridge(self):
-        if self.sgLoaded == 0:
-            try:
-                print "LOADING BRIDGE"
-                self.sgLoaded = 1
-                import dsSgUtil as sgBridge
-                global sgBridge
-    ##            reload(sgBridge)
-            except:
-                print "NOT LOADING LOADING BRIDGE"
-                self.sgLoaded = 1
-
     def helpWiki(self):
         url = "http://vfx.duckling.dk/?page_id=935"
         new = 2
@@ -183,8 +143,6 @@ class MyForm(QtGui.QMainWindow):
         self.minifigProduction()
 
     def reloadAssetStatus(self):
-        self.loadSgBridge()
-        global sgBridge
         project = self.ui.productionComboBox.currentText()
         print "loading status for %s" % project
         sgAssetStatusList = sgBridge.sgGetAllAssetStatus(project)
@@ -224,8 +182,6 @@ class MyForm(QtGui.QMainWindow):
             self.updateTemplateCombobox(self.loadedTemplates)
 
     def setShotgunStatus(self, assetName, status):
-        self.loadSgBridge()
-        global sgBridge
         project = self.ui.productionComboBox.currentText()
         assetType = self.ui.assetTypeComboBox.currentText()
         assetSubType = self.ui.assetSubTypeComboBox.currentText()
@@ -235,8 +191,6 @@ class MyForm(QtGui.QMainWindow):
         self.reloadAssetStatus()
 
     def listTemplates(self):
-        self.loadSgBridge()
-        global sgBridge
         if not self.templateSettings:
             print "Loading templates"
             sgEntity = "TaskTemplate"
@@ -349,8 +303,6 @@ class MyForm(QtGui.QMainWindow):
         formatManager.popRenderGlobals()
 
     def saveIconToShotgun(self, project, assetName, assetType, assetSubType, filename):
-        self.loadSgBridge()
-        global sgBridge
         sgBridge.sgCreateIcon(project, assetName, assetType, assetSubType, filename)
 
 
@@ -404,6 +356,7 @@ class MyForm(QtGui.QMainWindow):
 
     def updateFilmComboBox(self):
         '''List all active films for selected project'''
+        print "------------------------------------------------------------------------***************"
         try:
             self.ui.filmList.clear()
             project = self.ui.productionComboBox.currentText()
@@ -470,21 +423,14 @@ class MyForm(QtGui.QMainWindow):
                 i=i+1
 
     def assetListView(self, item):
-        if self.ui.wrapCheckBox.isChecked(): onOff = 2
-        else: onOff = 0
-
-        print "%s assetListView" % onOff
         if ".." in item.text():
             MyForm.assetListUpdate(self)
             self.ui.dirPathLabel.clear()
-            self.wrapIcons(onOff, True)
         elif ".ma" in item.text():
             MyForm.openMaFiles(self, item.text())
-            self.wrapIcons(onOff, False)
         else:
             self.asset = item.text()
             MyForm.listMaFiles(self, item)
-            self.wrapIcons(onOff, False)
 
 
     def listMaFiles(self, item="", fullPath=False):
@@ -543,8 +489,6 @@ class MyForm(QtGui.QMainWindow):
             self.ui.assetListWidget.setIconSize(QtCore.QSize(0, 0))
 
     def createMinifigAsset(self):
-        self.loadSgBridge()
-        global sgBridge
         if self.ui.assetNameTextEdit.text() == "":
             print "No name Typed"
         else:
@@ -633,8 +577,6 @@ class MyForm(QtGui.QMainWindow):
             print "Please Select Something to Export"
 
     def createAsset(self):
-        self.loadSgBridge()
-        global sgBridge
         if self.ui.assetNameTextEdit.text() == "":
             print "No name Typed"
         else:
@@ -687,8 +629,6 @@ class MyForm(QtGui.QMainWindow):
         return {'projName':project, 'assetType':assetType, 'assetSubType':assetSubType, 'assetName':assetName}
 
     def removeAsset(self):
-        self.loadSgBridge()
-        global sgBridge
         currentSelection = self.ui.assetListWidget.currentItem()
 
         if currentSelection == None:
@@ -1072,7 +1012,6 @@ class MyForm(QtGui.QMainWindow):
         settings.setValue("iconSizeState", self.ui.iconButtonGroup.checkedButton().text())
         settings.setValue("loadedTemplates", str(self.loadedTemplates))
         settings.setValue("currentTemplate", self.ui.shotgunTemplateComboBox.currentText())
-
 
 #IF not runned inside Maya
 if __name__ == "__main__":

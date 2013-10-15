@@ -7,7 +7,17 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore
+import dsCommon.dsOsUtil as dsOsUtil
+reload(dsOsUtil)
+pyVal = dsOsUtil.getPyGUI()
+
+if pyVal == "PySide":
+    from PySide import QtCore,QtGui
+    from shiboken import wrapInstance
+    
+if pyVal == "PyQt":
+    from PyQt4 import QtGui, QtCore, uic
+    import sip
 
 qt_resource_data = "\
 \x00\x00\x11\x07\

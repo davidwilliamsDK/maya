@@ -1,19 +1,9 @@
-import sys, sip, re, os, shutil,subprocess
-from PyQt4 import QtGui, QtCore, uic
+import sys, re, os, shutil,subprocess
 import dsMayaEnv
 import dsFolderStruct as dsFS
 import sgTools
-
-try:
-    import maya.cmds as cmds
-    import maya.OpenMayaUI as mui
-except:
-    pass
-
-def getMayaWindow():
-    'Get the maya main window as a QMainWindow instance'
-    ptr = mui.MQtUtil.mainWindow()
-    return sip.wrapinstance(long(ptr), QtCore.QObject)
+import dsCommon.dsOsUtil as dsOsUtil
+reload(dsOsUtil)
 
 if sys.platform == "linux2":
     uiFile = '/dsGlobal/dsCore/maya/dsCommon/dsMayaShot.ui'
@@ -21,13 +11,32 @@ if sys.platform == "linux2":
 else:
     uiFile = '//vfx-data-server/dsGlobal/dsCore/maya/dsCommon/dsMayaShot.ui'
     sys.path.append('//vfx-data-server/dsGlobal/dsCore/shotgun')
- 
-form_class, base_class = uic.loadUiType(uiFile)
+
+if dsOsUtil.mayaRunning() == True:
+    import maya.cmds as cmds
+    import maya.OpenMayaUI as mui
+    pyVal = dsOsUtil.getPyGUI()
+
+if pyVal == "PySide":
+    from PySide import QtCore,QtGui
+    from shiboken import wrapInstance
+    form_class, base_class = dsOsUtil.loadUiType(uiFile)
+    
+if pyVal == "PyQt":
+    from PyQt4 import QtGui, QtCore, uic
+    import sip
+    form_class, base_class = uic.loadUiType(uiFile)
+
+def getMayaWindow():
+    main_window_ptr = mui.MQtUtil.mainWindow()
+    if pyVal == "PySide":
+        return wrapInstance(long(main_window_ptr), QtGui.QWidget)
+    else:
+        return sip.wrapinstance(long(main_window_ptr), QtCore.QObject)
 
 class Window(base_class, form_class):
     def __init__(self, parent=getMayaWindow()):
-        '''A custom window with a demo set of ui widgets'''
-        super(base_class, self).__init__(parent)
+        super(Window, self).__init__(parent)
         self.setupUi(self)
         
         

@@ -150,7 +150,7 @@ class MyForm(QtGui.QMainWindow):
                 ##    self.ui.projectComboBox.addItem("")
                 ##    self.ui.projectComboBox.setItemText(i, QtGui.QApplication.translate("MainWindow", project, None, QtGui.QApplication.UnicodeUTF8))
                 ##    i = i+1
-		
+
         MyForm.updateAssetTypeComboBox(self)
 
     def updateAssetTypeComboBox(self):

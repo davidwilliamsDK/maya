@@ -1,30 +1,40 @@
-import sys, sip, re, os, shutil, subprocess
-from PyQt4 import QtGui, QtCore, uic
+import sys, re, os, shutil, subprocess
 import sgTools, dsCommon
 import dsPlayblast;reload(dsPlayblast)
-try:
-    import maya.cmds as cmds
-    import maya.OpenMayaUI as mui
-except:
-    pass
-
-def getMayaWindow():
-    'Get the maya main window as a QMainWindow instance'
-    ptr = mui.MQtUtil.mainWindow()
-    return sip.wrapinstance(long(ptr), QtCore.QObject)
+import dsCommon.dsOsUtil as dsOsUtil;reload(dsOsUtil)
+import dsSQLTools as dsSQL
 
 if sys.platform == "linux2":
     uiFile = '/dsGlobal/dsCore/maya/dsAnimation/dsAnimTools.ui'
 else:
     uiFile = '//vfx-data-server/dsGlobal/dsCore/maya/dsAnimation/dsAnimTools.ui'
+    
+import maya.cmds as cmds
+import maya.OpenMayaUI as mui
+pyVal = dsOsUtil.getPyGUI()
 
-form_class, base_class = uic.loadUiType(uiFile)
+if pyVal == "PySide":
+    from PySide import QtCore,QtGui
+    from shiboken import wrapInstance
+    form_class, base_class = dsOsUtil.loadUiType(uiFile)
+    
+if pyVal == "PyQt":
+    from PyQt4 import QtGui, QtCore, uic
+    import sip
+    form_class, base_class = uic.loadUiType(uiFile)
+
+def getMayaWindow():
+    main_window_ptr = mui.MQtUtil.mainWindow()
+    if pyVal == "PySide":
+        return wrapInstance(long(main_window_ptr), QtGui.QWidget)
+    else:
+        return sip.wrapinstance(long(main_window_ptr), QtCore.QObject)
 
 class Window(base_class, form_class):
-
     def __init__(self, parent=getMayaWindow()):
-        super(base_class, self).__init__(parent)
+        super(Window, self).__init__(parent)
         self.setupUi(self)
+        
         self.setUp()
         self.sgGetUser()
         self.updateShots()
@@ -117,11 +127,14 @@ class Window(base_class, form_class):
         self.userDict = {}
         self.userProject = {}
         self.group = {'type': 'Group', 'id': 5}
-        self.myPeople = sgTools.sgGetPeople()
-        for user in self.myPeople:
-            userName = str(user['name'])
+        self.myPeople = dsSQL.getValueDB("//vfx-data-server/dsGlobal/globalusers","Users","Status","act")
+        
+        #self.myPeople = sgTools.sgGetPeople()
+        
+        for user in sorted(self.myPeople):
+            userName = str(user[1])
             self.User_CB.addItem(userName)
-            self.userDict[userName] = user['id']
+            self.userDict['id'] = user[0]
 
     def load_config(self):
         '''
@@ -158,6 +171,10 @@ class Window(base_class, form_class):
 
 
 def dsPB():
-    global myWindow
-    myWindow = Window()
-    myWindow.show()
+    global dsAnimToolsWindow
+    try:
+        dsAnimToolsWindow.close()
+    except:
+        pass
+    dsAnimToolsWindow = Window()
+    dsAnimToolsWindow.show()

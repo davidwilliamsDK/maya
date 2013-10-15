@@ -1,33 +1,42 @@
 
-import sys, sip, re, os, shutil, subprocess, stat
-from PyQt4 import QtGui, QtCore, uic
-import sgTools
+import sys, re, os, shutil, subprocess, stat, string
 import maya.cmds as cmds
 import dsCommon.dsMetaDataTools as dsMDT
 reload(dsMDT)
 import dsCommon.dsOsUtil as dsOsUtil;reload(dsOsUtil)
-
-
-if dsOsUtil.mayaRunning() == True:
-    import maya.cmds as cmds
-    import maya.OpenMayaUI as mui
-
-def getMayaWindow():
-    'Get the maya main window as a QMainWindow instance'
-    ptr = mui.MQtUtil.mainWindow()
-    return sip.wrapinstance(long(ptr), QtCore.QObject)
+import dsSQLTools as dsSQL
 
 
 if sys.platform == "linux2":
     uiFile = '/dsGlobal/dsCore/maya/dsCheck/dsSceneSave.ui'
 else:
     uiFile = '//vfx-data-server/dsGlobal/dsCore/maya/dsCheck/dsSceneSave.ui'
+
+import maya.cmds as cmds
+import maya.OpenMayaUI as mui
+pyVal = dsOsUtil.getPyGUI()
   
-form_class, base_class = uic.loadUiType(uiFile)
+if pyVal == "PySide":
+    from PySide import QtCore,QtGui
+    from shiboken import wrapInstance
+    form_class, base_class = dsOsUtil.loadUiType(uiFile)
+    
+if pyVal == "PyQt":
+    from PyQt4 import QtGui, QtCore, uic
+    import sip
+    form_class, base_class = uic.loadUiType(uiFile)
+
+def getMayaWindow():
+    main_window_ptr = mui.MQtUtil.mainWindow()
+    if pyVal == "PySide":
+        return wrapInstance(long(main_window_ptr), QtGui.QWidget)
+    else:
+        return sip.wrapinstance(long(main_window_ptr), QtCore.QObject)
+
 class Window(base_class, form_class):
 
-    def __init__( self, parent = getMayaWindow(), *args ):
-        super( base_class, self ).__init__( parent )
+    def __init__(self, parent=getMayaWindow()):
+        super(Window, self).__init__(parent)
         self.setupUi(self)
 
         self.taskList = ['blocking','anim','light','effect','template']
@@ -65,13 +74,15 @@ class Window(base_class, form_class):
     def init_projects(self):
         '''
         Adds projects to self.projects
+        Only if the project contains a /Local/config.xml
         '''
         self.projects_CB.clear()
         list = []
         
-        tmpList = sgTools.sgGetProjects()
+        tmpList = dsSQL.getValueDB("U:/globalProjects","Projects","Status",'Active')
+
         for t in tmpList:
-            list.append(t['name'])
+            list.append(t[1])
         list.sort()
         for project in list:
             self.projects_CB.addItem(project)
@@ -115,7 +126,8 @@ class Window(base_class, form_class):
         pr = self.projects_CB.currentText()
         ep = self.episodes_CB.currentText()
         sq = self.sequence_CB.currentText()
-
+        
+        self.task_CB.addItem("data")
         if ep != "":
             if sq != "":
                 self.seqRootPath = self.dsPipe + "/" + pr + "/film/" + ep + "/" + sq + "/3D/"
@@ -126,38 +138,68 @@ class Window(base_class, form_class):
         self.updateFN()
 
     def updateFN(self):
+
+        #ext = item[-3:]        
+
         pr = self.projects_CB.currentText()
         ep = self.episodes_CB.currentText()
         sq = self.sequence_CB.currentText()
         tk = self.task_CB.currentText()
         nn = self.nn_LE.text()
+        self.ext = string.rsplit(cmds.file(q=True,sn=True),"/",1)[1].split(".")[-1]
         
-        self.taskRootPath = self.seqRootPath + str(tk) + "/"
-        
-        if nn == "":
-            self.sceneName = str(sq)+"_"+str(tk) + ".ma"
-        else:
-            if re.search("s[0-9][0-9][0-9][0-9]",nn):
-                self.sceneName = str(sq)+"_"+str(nn)+ "_"+str(tk)+".ma"
+        if tk is not "data":
+            self.taskRootPath = self.seqRootPath + str(tk) + "/"
+            
+            if nn == "":
+                self.sceneName = str(sq)+"_"+str(tk) + "." + self.ext
             else:
-                self.sceneName = str(sq)+"_"+str(tk)+"_"+str(nn) + ".ma"
-        
-        self.fn_LE.setText(self.sceneName)
+                if re.search("s[0-9][0-9][0-9][0-9]",nn):
+                    self.sceneName = str(sq)+"_"+str(nn)+ "_"+str(tk)+"." + self.ext
+                else:
+                    self.sceneName = str(sq)+"_"+str(tk)+"_"+str(nn) +"." + self.ext
+            
+            self.fn_LE.setText(self.sceneName)
+        if str(tk) == "data":
+            if nn == "":
+                self.sceneName = str(sq) + "_" + "." + self.ext
+            else:
+                if re.search("s[0-9][0-9][0-9][0-9]",nn):
+                    self.sceneName = str(sq)+"_"+str(nn)+ "." + self.ext
+                else:
+                    self.sceneName = str(sq)+"_"+str(nn) + "." + self.ext
+            
+            self.fn_LE.setText(self.sceneName)
         
     def saveScene(self):
-        
-        destFile = str(self.taskRootPath) + str(self.sceneName)
-        if os.path.isfile(destFile):
-            print "file already Present overwrite or notate"
-        else:
-            print "saving file :" + self.sceneName
-            print "here : " + self.taskRootPath
-            cmds.file(rename=destFile)
-            #cmds.file( save=True, type='mayaAscii',force=True)
+        tk = self.task_CB.currentText()
+
+        if tk is not "data":
+            destFile = str(self.taskRootPath) + str(self.sceneName)
+            if os.path.isfile(destFile):
+                print "file already Present overwrite or notate"
+            else:
+                print "saving file :" + self.sceneName
+                print "here : " + self.taskRootPath
+                cmds.file(rename=destFile)
+                #cmds.file( save=True, type='mayaAscii',force=True)
+                
+                dsMDT.testMDNode()
+                self.close()
+                if self.ext == "ma":
+                    cmds.file( save=True, type='mayaAscii',force=True)
+                else:
+                    cmds.file( save=True, type='mayaBinary',force=True)
+                    
+        if str(tk) == "data":
+            path =self.seqRootPath + tk + "/export/" + self.sceneName
+            print path
             
-            dsMDT.testMDNode()
-            self.close()
-            cmds.file( save=True, type='mayaAscii',force=True)
+            if self.ext == "ma":
+                cmds.file(path,es=True,type='mayaAscii',force=True,pr=True)
+            else:
+                cmds.file(path,es=True,type='mayaBinary',force=True,pr=True)
+
             
     def load_config(self):
         '''
