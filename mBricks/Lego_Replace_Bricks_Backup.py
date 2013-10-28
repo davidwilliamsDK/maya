@@ -18,6 +18,11 @@ class legoReplace:
                     cmds.delete(each)
                 except:
                     pass
+            '''try:
+                delNurbs = cmds.ls(type='nurbsCurve*')
+                cmds.delete(delNurbs)
+            except:
+                pass'''
             try:
                 unkown = cmds.ls(type='unknown')
                 cmds.select(unkown)
@@ -32,7 +37,6 @@ class legoReplace:
         try:
             libraryPath = '//vfx-data-server/dsPipe/Library/asset/3D/lego/mBrick/'
             texturePath = '//vfx-data-server/dsPipe/Library/asset/3D/lego/mBrick/LEGO_Colors/'
-            LODType = 'Cl.ma'
             try:
                 name = cmds.ls('m*',long=True,type='transform',geometry=False,dependencyNodes=False,dagObjects=False,shapes=False,textures=False,materials=False)
                 for each in name:
@@ -79,23 +83,14 @@ class legoReplace:
                     #print 'removeLong='+removeLong
                     nName = removeLong.split('_')[0]
                     #print 'nName='+nName
-                    filePath = libraryPath + nName + '/dev/maya/'
-                    #print filePath
-                    #Print files in filePath
-                    for files in os.listdir(filePath):
-                        if files.endswith(".ma"):
-                            filesRe = files.split("_") 
-                            if filesRe[-1] == LODType:
-                                #print files
-                                nName = files
-                    filePath = filePath + nName
-                    #print filePath
+                    filePath = libraryPath + nName + '/dev/maya/' + nName +'_Cl.ma'
+                    #print 'file dont exist = '+filePath
                     if not os.path.exists(filePath):
-                        print 'Not cleaned = ' + filePath
+                        print 'Not cleaned = '+filePath
                         pass
                     else:
                         #print 'filePath='+filePath
-                        importedFile = cmds.file( filePath, r=True, type='mayaAscii',returnNewNodes=True, namespace="LOD")
+                        importedFile = cmds.file( filePath, r=True, type='mayaAscii',returnNewNodes=True, namespace='LOD')
                         last = importedFile[-1]
                         #print 'last='+last
                         lastSplit = last.split('|')[1]

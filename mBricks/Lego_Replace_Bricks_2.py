@@ -1,3 +1,12 @@
+#-------------------------------------------------------------------------------
+# Name:        LegoReplaceBricks_Master.py
+# Purpose:     import LegoBricks replacing bricks with refferences
+#
+# Author:      Per Sundin
+#
+# Created:     18/1/2012
+#-------------------------------------------------------------------------------
+#!/usr/bin/env python
 name = ()
 import os
 import os.path
@@ -18,6 +27,11 @@ class legoReplace:
                     cmds.delete(each)
                 except:
                     pass
+            '''try:
+                delNurbs = cmds.ls(type='nurbsCurve*')
+                cmds.delete(delNurbs)
+            except:
+                pass'''
             try:
                 unkown = cmds.ls(type='unknown')
                 cmds.select(unkown)
@@ -30,9 +44,8 @@ class legoReplace:
             pass
     def Rebuild(self):
         try:
-            libraryPath = '//vfx-data-server/dsPipe/Library/asset/3D/lego/mBrick/'
-            texturePath = '//vfx-data-server/dsPipe/Library/asset/3D/lego/mBrick/LEGO_Colors/'
-            LODType = 'Cl.ma'
+            libraryPath = '\\vfx-data-server\dsPipe\Library\asset\3D\lego\mBrick/'
+            texturePath = '\\vfx-data-server\dsPipe\Library\asset\3D\lego\mBrick\LEGO_Colors/'
             try:
                 name = cmds.ls('m*',long=True,type='transform',geometry=False,dependencyNodes=False,dagObjects=False,shapes=False,textures=False,materials=False)
                 for each in name:
@@ -79,23 +92,15 @@ class legoReplace:
                     #print 'removeLong='+removeLong
                     nName = removeLong.split('_')[0]
                     #print 'nName='+nName
-                    filePath = libraryPath + nName + '/dev/maya/'
-                    #print filePath
-                    #Print files in filePath
-                    for files in os.listdir(filePath):
-                        if files.endswith(".ma"):
-                            filesRe = files.split("_") 
-                            if filesRe[-1] == LODType:
-                                #print files
-                                nName = files
-                    filePath = filePath + nName
-                    #print filePath
+                    #filePath = libraryPath +"/" + nName +'_LOD2.ma'
+                    filePath = libraryPath + nName + '/dev/maya/' + nName +'_Cl.ma'
+                    #print 'file dont exist = '+filePath
                     if not os.path.exists(filePath):
-                        print 'Not cleaned = ' + filePath
+                        print 'Not cleaned = '+filePath
                         pass
                     else:
-                        #print 'filePath='+filePath
-                        importedFile = cmds.file( filePath, r=True, type='mayaAscii',returnNewNodes=True, namespace="LOD")
+                        print 'filePath='+filePath
+                        importedFile = cmds.file( filePath, r=True, type='mayaAscii',returnNewNodes=True, namespace='LOD')
                         last = importedFile[-1]
                         #print 'last='+last
                         lastSplit = last.split('|')[1]
@@ -110,7 +115,42 @@ class legoReplace:
                             try:
                                 print materialID
                                 shader = Lego_Assign_Shader.main(materialID)
+                                '''shader = 'LegoS_'+str(materialID)
+                                cmds.shadingNode( 'VRayMtl' , asShader=True, name=shader)
+                                texturePath = '/dsPipe/Library/Asset/Bricks/LEGO_Colors/'+str(materialID)+'.png'
+                                inTexture = 'color_'+str(materialID)
+                                outTexture = 'place2dTexture_color_'+str(materialID)
+                                cmds.shadingNode('file',name = inTexture, asTexture=True);
+                                cmds.shadingNode('place2dTexture',name = outTexture, asUtility = True)
+                                cmds.connectAttr(outTexture+'.outUV', inTexture+'.uvCoord', f=True)
+                                cmds.connectAttr(outTexture+'.outUvFilterSize', inTexture+'.uvFilterSize', f=True)
+                                cmds.connectAttr(outTexture+'.coverage', inTexture+'.coverage', f=True)
+                                cmds.connectAttr(outTexture+'.translateFrame', inTexture+'.translateFrame', f=True)
+                                cmds.connectAttr(outTexture+'.rotateFrame', inTexture+'.rotateFrame', f=True)
+                                cmds.connectAttr(outTexture+'.mirrorU', inTexture+'.mirrorU', f=True)
+                                cmds.connectAttr(outTexture+'.mirrorV', inTexture+'.mirrorV', f=True)
+                                cmds.connectAttr(outTexture+'.stagger', inTexture+'.stagger', f=True)
+                                cmds.connectAttr(outTexture+'.wrapU', inTexture+'.wrapU', f=True)
+                                cmds.connectAttr(outTexture+'.wrapV', inTexture+'.wrapV', f=True)
+                                cmds.connectAttr(outTexture+'.repeatUV', inTexture+'.repeatUV', f=True)
+                                cmds.connectAttr(outTexture+'.vertexUvOne', inTexture+'.vertexUvOne', f=True)
+                                cmds.connectAttr(outTexture+'.vertexUvTwo', inTexture+'.vertexUvTwo', f=True)
+                                cmds.connectAttr(outTexture+'.vertexUvThree', inTexture+'.vertexUvThree', f=True)
+                                cmds.connectAttr(outTexture+'.vertexCameraOne', inTexture+'.vertexCameraOne', f=True)
+                                cmds.connectAttr(outTexture+'.noiseUV', inTexture+'.noiseUV', f=True)
+                                cmds.connectAttr(outTexture+'.offset', inTexture+'.offset', f=True)
+                                cmds.connectAttr(outTexture+'.rotateUV', inTexture+'.rotateUV', f=True)
+                                cmds.setAttr(inTexture+'.fileTextureName',str(texturePath),type = "string" )
+                                cmds.defaultNavigation(destination=shader, source=inTexture, connectToExisting=True)
+                                cmds.setAttr(inTexture+'.filterType', 0)
 
+                                cmds.setAttr(shader+'.brdfType', 0)
+                                cmds.setAttr(shader+'.traceReflections', 0)
+                                cmds.setAttr(shader+'.hilightGlossinessLock', 0)
+                                cmds.setAttr(shader+'.reflectionColor',0.2, 0.2, 0.2, type="double3" )
+                                cmds.setAttr(shader+'.hilightGlossiness',0.4)
+                                cmds.setAttr(shader+'.reflectionsMaxDepth', 1)
+                                cmds.setAttr(shader+'.refractionsMaxDepth', 1)'''
                             except Exception as e:
                                 print e
                                 print 'fail creating shadingNode'

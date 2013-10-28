@@ -1,21 +1,3 @@
-#-------------------------------------------------------------------------------
-# Name:        LegoCleanup_Master.py
-# Purpose:     Too export clean lego bricks too library and re import them later
-#
-# Author:      Per Sundin
-#
-# Created:     18/1/2012
-#-------------------------------------------------------------------------------
-#!/usr/bin/env python
-#-------------------------------------------------------------------------------
-# Name:        LegoCleanup.py
-# Purpose:     Too export clean lego bricks too library and re import them later
-#
-# Author:      Per Sundin
-#
-# Created:     18/1/2012
-#-------------------------------------------------------------------------------
-#!/usr/bin/env python
 import os
 import os.path
 import maya.cmds as cmds
@@ -202,8 +184,8 @@ class legoExport:
             #icon = "C:\Users\Per\Documents\Test\Empty.png"
             #dir = path
             #dirIcon = path
-            path = '/dsPipe/Library/asset/3D/lego/mBrick/'
-            icon = '/dsPipe/Library/.local/Resources/Icons/Empty.png'
+            path = '//vfx-data-server/dsPipe/Library/asset/3D/lego/mBrick/'
+            icon = '//vfx-data-server/dsPipe/Library/.local/Resources/Icons/Empty.png'
             dir = path + meshName + '/dev/maya/'
             dirIcon = path + meshName + '/images/icon/'
             LOD = 0

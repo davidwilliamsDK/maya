@@ -116,7 +116,7 @@ def openInBrowser(path):
         print os.path.exists(path)
         if os.path.exists(path):
             path = path.split("/")
-            path = path.join("\\")
+            path = "\\".join(path)
             subprocess.Popen("explorer %s" % (path))
         else:
             self.ui.statusbar.showMessage("Path dosen't exist")

@@ -1,5 +1,6 @@
 #Importing Modules
-import sys, os, platform
+import sys, os, platform, shutil
+#from thread import start_new_thread as snt
 
 #Set Python Paths
 if platform.system() == "Windows":
@@ -65,21 +66,28 @@ class MyForm(form_class, base_class):
         super(MyForm, self).__init__(parent)
         self.setupUi(self)
 
-##        QtCore.QObject.connect(self.buttonGroup, QtCore.SIGNAL("buttonClicked(int)"), self.listAssets);
         QtCore.QObject.connect(self.D2, QtCore.SIGNAL("clicked(int)"), self.addType);
         QtCore.QObject.connect(self.D2, QtCore.SIGNAL("clicked(int)"), self.addSubType);
         QtCore.QObject.connect(self.D3, QtCore.SIGNAL("clicked(int)"), self.addType);
         QtCore.QObject.connect(self.D3, QtCore.SIGNAL("clicked(int)"), self.addSubType);
         QtCore.QObject.connect(self.type, QtCore.SIGNAL("activated(int)"), self.addSubType);
         QtCore.QObject.connect(self.type, QtCore.SIGNAL("activated(int)"), self.list);
+        QtCore.QObject.connect(self.type, QtCore.SIGNAL("activated(int)"), self.bgColor);
         QtCore.QObject.connect(self.subType, QtCore.SIGNAL("activated(int)"), self.list);
+        QtCore.QObject.connect(self.subType, QtCore.SIGNAL("activated(int)"), self.bgColor);
         QtCore.QObject.connect(self.search, QtCore.SIGNAL("returnPressed()"), self.list);
+        QtCore.QObject.connect(self.search, QtCore.SIGNAL("returnPressed()"), self.bgColor);
         QtCore.QObject.connect(self.iconSlider, QtCore.SIGNAL("valueChanged(int)"), self.iconUpdate);
         QtCore.QObject.connect(self.mbrick, QtCore.SIGNAL("stateChanged(int)"), self.listAssets);
         QtCore.QObject.connect(self.mbrick, QtCore.SIGNAL("stateChanged(int)"), self.list);
         QtCore.QObject.connect(self.mbrick, QtCore.SIGNAL("stateChanged(int)"), self.enableDisableGUI);
         QtCore.QObject.connect(self.project, QtCore.SIGNAL("activated(int)"), self.listMajors);
+        QtCore.QObject.connect(self.major, QtCore.SIGNAL("activated(int)"), self.bgColor);
 
+        QtCore.QObject.connect(self.modelList, QtCore.SIGNAL("itemDoubleClicked(QListWidgetItem *)"), self.assetHandler);
+        QtCore.QObject.connect(self.modelList, QtCore.SIGNAL("itemDoubleClicked(QListWidgetItem *)"), self.bgColor);
+
+        self.actionShow_Menu.triggered.connect(self.showMenu)
 
         self.libraryPath = projectUtil.libraryPath() + "/asset/"
 
@@ -93,8 +101,14 @@ class MyForm(form_class, base_class):
         self.asset2DsubType = []
         self.listed2D = 0
 
+        self.assetsInDst = []
+        self.prj = ""
+        self.eps = ""
+
         self.mBrick = []
         self.listedmBrick = 0
+
+        self.currentAssetList = []
 
         self.projects = projectUtil.listProjects()
 
@@ -106,11 +120,95 @@ class MyForm(form_class, base_class):
         self.iconUpdate()
         self.autoSetting()
 
+        self.sgLoaded = False
+        self.bgColor()
+
+    def bgColor(self):
+        if not self.prj == str(self.project.currentText()):
+            if not self.eps == str(self.major.currentText()):
+                subAssetInDst = dsOsUtil.listFolder(projectUtil.listSubAssets(str(self.project.currentText()), str(self.major.currentText())))
+                for subAsset in subAssetInDst:
+                    for asset in dsOsUtil.listFolder(projectUtil.listAssets(str(self.project.currentText()), str(self.major.currentText()), subAsset)):
+                        self.assetsInDst.append("%s/%s" % (projectUtil.listAssets(str(self.project.currentText()), str(self.major.currentText()), subAsset), asset))
+                        self.prj = str(self.project.currentText())
+                        self.eps = str(self.major.currentText())
+
+        i = 0
+        for asset in self.currentAssetList:
+            src = "%s/%s" % (projectUtil.listAssets(str(self.project.currentText()) , str(self.major.currentText()), asset["subType"]), asset["name"])
+            if src in self.assetsInDst:
+                self.modelList.item(i).setBackgroundColor(QtGui.QColor(0, 160, 0))
+                self.modelList.item(i).setTextColor(QtGui.QColor(0, 0, 0))
+                i = i + 1
+            else:
+                self.modelList.item(i).setBackgroundColor(QtGui.QColor(0, 0, 0, 0))
+                self.modelList.item(i).setTextColor(QtGui.QColor(0, 0, 0))
+                i = i + 1
+
+    def loadSG(self):
+        if not self.sgLoaded:
+            import dsSgUtil as sgBridge
+            global sgBridge
+            self.sgLoaded = True
+
+    def showMenu(self): self.dockWidget_3.setVisible(True)
+
+    def assetHandler(self):
+        asset =  self.currentAssetList[self.modelList.currentRow()]
+        if not str(asset["type"]) == "shader":
+            if "Select Project" in str(self.project.currentText()) or "Select Major" in str(self.major.currentText()):
+                self.statusbar.showMessage("Please Set Project and Major")
+            else:
+                src = "%s/%s" % (asset["path"], asset["name"])
+                dst = "%s/%s/" % (projectUtil.listAssets(self.project.currentText(), self.major.currentText(), asset["subType"]), asset["name"])
+                if not os.path.exists("%s" % (dst)):
+                    path = "%s" % (dst)
+                    shutil.copytree(str(src), str(dst))
+                    if str(dst).endswith("/"): dst = str(dst)[0:-1]
+                    self.assetsInDst.append(str(dst))
+
+                    #ADD TO SHOTGUN
+                    try:
+                        self.loadSG()
+                        list = [["Asset", "sg_asset_type", str(asset["type"])],["Asset", "sg_subtype", str(asset["subType"])]]
+                        sgBridge.addTypesToList(list)
+                        assetID = sgBridge.sgCreateAsset(self.project.currentText(), str(asset["name"]), str(self.major.currentText()), str(asset["subType"]))
+                        if os.path.exists(asset["iconPath"]):
+                            sgBridge.sgCreateIcon(self.project.currentText(), str(asset["name"]), str(self.major.currentText()), str(asset["subType"]), asset["iconPath"])
+                    except: pass
+                else:
+                    self.statusbar.showMessage("There's already an asset with that name present")
+        else:
+            self.statusbar.showMessage("This is a shader assign to selected instead?")
+
     def autoSetting(self):
+        prj = None
+        major = None
+        D2D3 = 0
         if dsOsUtil.mayaRunning() == True:
             path = cmds.file(q=True, location=True)
-            if "dsPipe" in path:
-                print path
+            if "/dsPipe/" in path or "P:/" in path:
+                if "/film/" in path:
+                    if "dsPipe" in path: prj = path.split("/dsPipe/", 1)[-1].rsplit("/film/", 1)[0]
+                    elif "P:/" in path: prj = path.split("P:/", 1)[-1].rsplit("/film/", 1)[0]
+                    major = path.split("/film/", 1)[-1].split("/", 1)[0].rsplit("_", 1)[0]
+                    D2D3 = 1
+                elif "/asset/" in path:
+                    if "dsPipe" in path: prj = path.split("/dsPipe/", 1)[-1].rsplit("/asset/", 1)[0]
+                    elif "P:/" in path: prj = path.split("P:/", 1)[-1].rsplit("/asset/", 1)[0]
+
+                    if "/asset/3D/" in path:
+                        major = path.split("/asset/3D/", 1)[-1].split("/", 1)[0]
+                        D2D3 = 1
+                    if "/asset/2D/" in path:
+                        major = path.split("/asset/2D/", 1)[-1].split("/", 1)[0]
+                        D2D3 = 0
+
+        if prj:
+            self.project.setCurrentIndex(self.project.findText(prj))
+        self.listMajors()
+        if major:
+            self.major.setCurrentIndex(self.major.findText(major))
 
     def listProjects(self):
         if not self.listProjects == []:
@@ -249,7 +347,7 @@ class MyForm(form_class, base_class):
             assets = self.mBrick
 
         mbrick = self.mbrick.isChecked()
-        print mbrick
+        self.currentAssetList = []
 
         #FILTERS
         type = self.type.currentText()
@@ -316,6 +414,8 @@ class MyForm(form_class, base_class):
         font.PreferAntialias
         font.setWeight(63)
 
+        self.currentAssetList.append(asset)
+
         if os.path.exists(asset["iconPath"]) == True:
             item = QtGui.QListWidgetItem(self.modelList)
             #Add Icon
@@ -337,12 +437,6 @@ if __name__ == "__main__":
     myapp = MyForm()
     myapp.show()
     sys.exit(app.exec_())
-
-#If runned unside Maya
-##def UI():
-##    global myWindow
-##    myWindow = MyForm(getMayaWindow())
-##    myWindow.show()
 
 def UI():
     global dsModelLibWindow

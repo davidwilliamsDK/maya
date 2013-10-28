@@ -1,31 +1,29 @@
-import sys, re, os, shutil, subprocess, stat, webbrowser
+import sys, re, os, shutil, subprocess, stat, webbrowser, time,string
 
-if sys.platform == 'linux2':
-    sys.path.append('/dsGlobal/globalMaya/Python/PyQt_Linx64')
-    sys.path.append('/dsGlobal/dsCore/shotgun')
-    sys.path.append('/dsGlobal/dsCore/maya/dsCommon')
-    sys.path.append('/dsGlobal/dsCore/maya/dsCheck')
-    uiFile = '/dsGlobal/dsCore/maya/dsShotOpen/dsShotOpenUI.ui'
 
-else:
-    sys.path.append(r'\\vfx-data-server\dsGlobal\globalMaya\Python\PyQt_Win64')
-    sys.path.append(r'\\vfx-data-server\dsGlobal\dsCore\shotgun')
-    sys.path.append(r'\\vfx-data-server\dsGlobal\dsCore\maya')
-    sys.path.append(r'\\vfx-data-server\dsGlobal\dsCore\maya\dsCheck')
-    uiFile = '//vfx-data-server/dsGlobal/dsCore/maya/dsShotOpen/dsShotOpenUI.ui'
-    
+sys.path.append(r'\\vfx-data-server\dsGlobal\globalMaya\Python\PyQt_Win64')
+sys.path.append(r'\\vfx-data-server\dsGlobal\dsCore\shotgun')
+sys.path.append(r'\\vfx-data-server\dsGlobal\dsCore\maya')
+sys.path.append(r'\\vfx-data-server\dsGlobal\dsCore\maya\dsCheck')
+uiFile = '//vfx-data-server/dsGlobal/dsCore/maya/dsShotOpen/dsShotOpenUI.ui'
+mayaTmpIcon = "U:/globalMaya/Icons/mayaico_2014.png"
+
+
 import dsCommon.dsMetaDataTools as dsMDT
 import dsSQLTools as dsSQL
 import sgTools
 import dsVersionUp   
 import dsCommon.dsOsUtil as dsOsUtil;reload(dsOsUtil)
 import dsSaveScene;reload(dsSaveScene)
+import dsShotOpenIcons;reload(dsShotOpenIcons)
+import dsCommon.dsMetaDataTools as dsMDT;reload(dsMDT)
+
+pyVal = dsOsUtil.getPyGUI()
 
 if dsOsUtil.mayaRunning() == True:
     import maya.cmds as cmds
     import maya.OpenMayaUI as mui
-    pyVal = dsOsUtil.getPyGUI()
-  
+
 if pyVal == "PySide":
     from PySide import QtCore,QtGui
     from shiboken import wrapInstance
@@ -42,9 +40,14 @@ def getMayaWindow():
         return wrapInstance(long(main_window_ptr), QtGui.QWidget)
     else:
         return sip.wrapinstance(long(main_window_ptr), QtCore.QObject)
-
+    
+if pyVal == "PySide":
+    parentVar = getMayaWindow()
+else:
+    parentVar = None
+    
 class Window(base_class, form_class):
-    def __init__(self, parent=getMayaWindow()):
+    def __init__(self, parent=parentVar):
         super(Window, self).__init__(parent)
         self.setupUi(self)
         
@@ -64,41 +67,84 @@ class Window(base_class, form_class):
         self.init_user()
         self.init_projects()
 
+        self.iconSizeVal = 75
+        self.textPosX = 100
+        self.textPosY = 30
+        self.fontSize = 10
+        self.tw_mayaScene.verticalHeader().setDefaultSectionSize(self.iconSizeVal)
+        self.tw_mayaScene.setIconSize(QtCore.QSize(self.iconSizeVal,self.iconSizeVal))
+
         self.projects_CB.currentIndexChanged.connect(self.init_episodes)
         self.episodes_CB.currentIndexChanged.connect(self.init_sequences)
         self.sequence_CB.currentIndexChanged.connect(self.init_tasks)
-        self.sequence_CB.currentIndexChanged.connect(self.init_shots)
         self.task_CB.currentIndexChanged.connect(self.init_scene)
-
+        
+        self.iconLarge_PB.clicked.connect(self.largeIcons)
+        self.iconMed_PB.clicked.connect(self.medIcons)
+        self.iconSmall_PB.clicked.connect(self.smallIcons)
         self.createEmpty_B.clicked.connect(self.createEmpty)
         self.saveAs_B.clicked.connect(self.saveAs)
         self.ref_B.clicked.connect(self.refScene)
         self.import_B.clicked.connect(self.importScene)
+        self.export_B.clicked.connect(self.exportScene)
         self.retire_B.clicked.connect(self.retireScene)
         self.versionUp_B.clicked.connect(self.versionAction)
         self.notate_B.clicked.connect(self.notateScene)
         self.explorer_B.clicked.connect(self.explorerOpen)
         self.sg_B.clicked.connect(self.sgWeb)
         
-        self.scene_LW.itemDoubleClicked.connect(self.openScene)
+        
+        
+        self.tw_mayaScene.doubleClicked.connect(self.openScene)
         self.hero_RB.clicked.connect(self.init_scene)
         self.version_RB.clicked.connect(self.init_scene)
+        self.data_RB.clicked.connect(self.init_scene)
         
-        self.scene_LW.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.scene_LW.customContextMenuRequested.connect(self.openMenu)
+        self.tw_mayaScene.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.tw_mayaScene.customContextMenuRequested.connect(self.openMenu)
         
         self.connect(self.actionVfx_wiki_dk,QtCore.SIGNAL('triggered()'), lambda item=[]: self.webBrowser())
-
+        
         self.load_config()
+        
+    def largeIcons(self):
+    
+        self.iconSizeVal = 130
+        self.textPosX = 140
+        self.textPosY = 70
+        self.fontSize = 12
 
-    def saveAs(self):
-        print "save file as"
-        dsSaveScene.dsSS()
+        self.tw_mayaScene.verticalHeader().setDefaultSectionSize(self.iconSizeVal)
+        self.tw_mayaScene.setIconSize(QtCore.QSize(self.iconSizeVal,self.iconSizeVal))
+        self.init_scene()
+
+    def medIcons(self):
+        self.iconSizeVal = 75
+        self.textPosX = 100
+        self.textPosY = 30
+        self.fontSize = 10
+        
+        self.tw_mayaScene.verticalHeader().setDefaultSectionSize(self.iconSizeVal)
+        self.tw_mayaScene.setIconSize(QtCore.QSize(self.iconSizeVal,self.iconSizeVal))
+        self.init_scene()
+
+    def smallIcons(self):
+        self.iconSizeVal = 40
+        self.textPosX = 75
+        self.textPosY = 20
+        self.fontSize = 8
+        
+        self.tw_mayaScene.verticalHeader().setDefaultSectionSize(self.iconSizeVal)
+        self.tw_mayaScene.setIconSize(QtCore.QSize(self.iconSizeVal,self.iconSizeVal))
+        self.init_scene()
 
     def init_GUI(self):
         self.hero_RB.setEnabled(False)
         self.version_RB.setEnabled(False)
-    
+        self.data_RB.setEnabled(False)
+        self.tw_mayaScene.setRowCount(0)
+        self.tw_mayaScene.setColumnWidth(0, 300)
+
     def init_user(self):
 
         self.myPeople = dsSQL.getValueDB("//vfx-data-server/dsGlobal/globalusers","Users","Status","act")
@@ -112,18 +158,6 @@ class Window(base_class, form_class):
             self.user_CB.addItem(userName)
             self.userDict['id'] = user[0]
             self.userDict['sg_initials'] = user[2]
-        
-        '''
-        #Connecting Through Shotgun Web
-        self.group = {'type': 'Group', 'id': 5}
-        self.myPeople = sgTools.sgGetPeople()
-        for user in sorted(self.myPeople):
-            if str(user['sg_status_list']) == "act":
-                userName = str(user['name'])
-                self.user_CB.addItem(userName)
-                self.userDict['id'] = user['id']
-                self.userDict['sg_initials'] = user['sg_initials']
-        '''
             
     def init_projects(self):
         '''
@@ -134,10 +168,7 @@ class Window(base_class, form_class):
         list = []
         
         tmpList = dsSQL.getValueDB("U:/globalProjects","Projects","Status",'Active')
-        
-        #ShotGun Connection
-        #tmpList = sgTools.sgGetProjects()
-        
+
         for t in tmpList:
             list.append(t[1])
         list.sort()
@@ -164,7 +195,6 @@ class Window(base_class, form_class):
         Adds sequences to self.sequences
         Searches after pattern is [qQ][0-9][0-9][0-9][0-9]
         '''
-        #self.keepTask()
         self.sequence_CB.clear()
         pr = self.projects_CB.currentText()
         ep = self.episodes_CB.currentText()
@@ -181,6 +211,7 @@ class Window(base_class, form_class):
         '''
         Adds tasks to self.task_CB
         '''
+        self.tkname = self.task_CB.currentText()
         self.task_CB.clear()
         pr = self.projects_CB.currentText()
         ep = self.episodes_CB.currentText()
@@ -196,11 +227,12 @@ class Window(base_class, form_class):
                     self.task_CB.addItem(t)
                     
         self.loadTaskconfig()
-            
+        
     def init_scene(self):
-        #self.loadTaskconfig()
+        
         self.hero_RB.setEnabled(True)
         self.version_RB.setEnabled(True)
+        self.data_RB.setEnabled(True)
             
         if self.hero_RB.isChecked():
             view = "hero"
@@ -208,20 +240,11 @@ class Window(base_class, form_class):
         if self.version_RB.isChecked():
             view = "version"
             self.sceneView(view)
+        if self.data_RB.isChecked():
+            view = "data"
+            self.sceneView(view)
+        self.save_config()
         
-    def init_shots(self):
-        self.init_vars()
-        self.shots_LW.clear()
-        
-        
-        
-        #sg = sgTools.getSG()
-        #['sg_scene.Scene.code','is', str(epiName)]"
-        #sgShots = sg.find("Shot",[['project.Project.name','is',str(self.pr)],['sg_scene.Scene.code','is',str(self.ep)],['sg_sequence.Sequence.code','is',str(self.sq)]],['code','id','sg_cut_in','sg_cut_out','sg_mayain','sg_mayaout'])
-        
-        #for shot in sgShots:
-            #self.shots_LW.addItem(str(shot['code']))
-
     def init_vars(self):
         self.pr = self.projects_CB.currentText()
         self.ep = self.episodes_CB.currentText()
@@ -232,75 +255,186 @@ class Window(base_class, form_class):
         '''
         Adds tasks to self.task_CB
         '''
-        
-        self.scene_LW.clear()
-        pr = self.projects_CB.currentText()
-        ep = self.episodes_CB.currentText()
-        sq = self.sequence_CB.currentText()
-        tk = self.task_CB.currentText()
-        
-        if tk != "all":
-            if view == "hero":
-                self.sceneRootPath = self.taskRootPath + tk
-                tmpList = os.listdir(self.sceneRootPath)
-
-                tmpList = self.getMA(tmpList)
-                if len(tmpList) != 0:
-                    for t in tmpList:
-                        self.scene_LW.addItem(t)
-                
-            if view == "version":
-                self.sceneRootPath = self.taskRootPath + tk + "/version"
-                if os.path.isdir(self.sceneRootPath):
+        self.tw_mayaScene.setRowCount(0)
+        self.init_vars()
+        try:
+            if self.tk != "all":
+                if view == "hero":
+                    self.sceneRootPath = self.taskRootPath + self.tk
                     tmpList = os.listdir(self.sceneRootPath)
+                    tmpList = self.getMA(tmpList)
+                    self.addWidget(tmpList)
                     
-                    for t in tmpList:
-                        if t[0] != ".":
-                            vList = os.listdir(self.sceneRootPath + "/" + t)
-                            for v in vList:
-                                if re.search(".ma",v) or re.search(".mb",v):
-                                    self.scene_LW.addItem(v)
-        if tk == "all":
-            if view == "hero":
-                for tk in self.taskList:
-                    try:
+                if view == "version":
+                    self.sceneRootPath = self.taskRootPath + self.tk + "/version"
+                    if os.path.isdir(self.sceneRootPath):
+                        verList = os.listdir(self.sceneRootPath)
+    
+                        for v in verList:
+                            if v[0] != ".":
+                                path = self.sceneRootPath + "/" + v
+                                tmpList = os.listdir(path)
+                                rowCount = 0
+                                for t in tmpList:
+                                    self.addVersionWidget(t,path,rowCount)
+                                    rowCount = rowCount + 1
+                                    
+            if self.tk == "all":
+                if view == "hero":
+                    for tk in self.taskList:
                         self.sceneRootPath = self.taskRootPath + tk
                         tmpList = os.listdir(self.sceneRootPath)
                         
                         tmpList = self.getMA(tmpList)
                         if len(tmpList) != 0:
-                            self.scene_LW.addItem("------"+str(tk)+"------")
-                            for t in tmpList:
-                                self.scene_LW.addItem(t)
-                    except:
-                        pass
+                            self.addWidget(tmpList)
+                            
+                if view == "version":
+                    for tk in self.taskList:
+                        self.sceneRootPath = self.taskRootPath + tk + "/version"
+                        if os.path.isdir(self.sceneRootPath):
+                            verList = os.listdir(self.sceneRootPath)
+        
+                            for v in verList:
+                                if v[0] != ".":
+                                    path = self.sceneRootPath + "/" + v
+                                    tmpList = os.listdir(path)
+                                    rowCount = 0
+                                    for t in tmpList:
+                                        self.addVersionWidget(t,path,rowCount)
+                                        rowCount = rowCount + 1
+    
+            if view == "data":
+                self.sceneRootPath = self.taskRootPath + "/data/export"
+                if os.path.isdir(self.sceneRootPath):
+                    tmpList = os.listdir(self.sceneRootPath)
                     
-            if view == "version":
-                for tk in self.taskList:
-                    self.sceneRootPath = self.taskRootPath + tk + "/version"
-                    if os.path.isdir(self.sceneRootPath):
-                        tmpList = os.listdir(self.sceneRootPath)
-                        
-                        tmpList = self.getMA(tmpList)
-                        
-                        if len(tmpList) != 0:
-                            self.scene_LW.addItem("------"+str(tk)+"------")
-                            for t in tmpList:
-                                if t[0] != ".":
-                                    vList = os.listdir(self.sceneRootPath + "/" + t)
-                                    for v in vList:
-                                        if re.search(".ma",v) or re.search(".mb",v):
-                                            self.scene_LW.addItem(v)
+                    tmpList = self.getMA(tmpList)
+                    if len(tmpList) != 0:
+                        self.addWidget(tmpList)
+        except:
+            pass
 
-    def checkScene(self,path):
-        sceneList = []
-        tmpList = os.listdir(path)
+    def addVersionWidget(self,file,path,rowCount):
+
+        self.tw_mayaScene.insertRow(rowCount)
+
+        item = QtGui.QTableWidgetItem(file)
+        self.tw_mayaScene.setVerticalHeaderItem(rowCount,item)
+        
+        
+        self.widget = QtGui.QWidget(self.tw_mayaScene)
+        self.widget.setGeometry(QtCore.QRect(0, 0, 470, self.iconSizeVal))
+        self.widget.setObjectName("widget")
+        
+        iconPath = self.getLatestIcon(file,self.taskRootPath + "/data/icon/")
+        
+        self.icon_L = QtGui.QLabel(self.widget)
+        self.icon_L.setGeometry(QtCore.QRect(0, 0, self.iconSizeVal, self.iconSizeVal))
+        self.icon_L.setMaximumSize(QtCore.QSize(self.iconSizeVal, self.iconSizeVal))
+        
+        self.icon_L.setAutoFillBackground(True)
+        self.icon_L.setText("")
+        self.icon_L.setPixmap(QtGui.QPixmap(iconPath))
+        self.icon_L.setScaledContents(True)
+        self.icon_L.setObjectName("icon_L")
+
+        self.date_L = QtGui.QLabel(self.widget)
+        self.date_L.setGeometry(QtCore.QRect(self.textPosX, self.textPosY, 341, 16))
+        self.date_L.setObjectName("date_L")
+        self.scene_L = QtGui.QLabel(self.widget)
+        self.scene_L.setGeometry(QtCore.QRect(self.textPosX, self.textPosY - 15, 341, 16))
+        
+        date = self.getDateModified(path)
+        self.date_L.setText(date)
+        
+        font = QtGui.QFont()
+        font.setFamily("Verdana")
+        font.setPointSize(self.fontSize)
+        font.setWeight(75)
+        font.setBold(True)
+        self.scene_L.setFont(font)
+        self.scene_L.setFrameShape(QtGui.QFrame.NoFrame)
+        self.scene_L.setFrameShadow(QtGui.QFrame.Plain)
+        self.scene_L.setObjectName("scene_L")
+        
+        self.scene_L.setText(file)
+
+        self.tw_mayaScene.setCellWidget(rowCount,0,self.widget)
+        
+    def addWidget(self,tmpList):
+        rowCount = 0
+        
         for t in tmpList:
-            if str(t) != ".mayaSwatches":
-                if re.search(".ma",t) or re.search(".mb",t):
-                    sceneList.append(t)
+            self.tw_mayaScene.insertRow(rowCount)
 
-        return sceneList
+            item = QtGui.QTableWidgetItem(t)
+            self.tw_mayaScene.setVerticalHeaderItem(rowCount,item)
+            
+            
+            self.widget = QtGui.QWidget(self.tw_mayaScene)
+            self.widget.setGeometry(QtCore.QRect(0, 0, 470, self.iconSizeVal))
+            self.widget.setObjectName("widget")
+            
+            iconPath = self.getLatestIcon(t,self.taskRootPath + "/data/icon/")
+            
+            self.icon_L = QtGui.QLabel(self.widget)
+            self.icon_L.setGeometry(QtCore.QRect(0, 0, self.iconSizeVal, self.iconSizeVal))
+            self.icon_L.setMaximumSize(QtCore.QSize(self.iconSizeVal, self.iconSizeVal))
+            
+            self.icon_L.setAutoFillBackground(True)
+            self.icon_L.setText("")
+            self.icon_L.setPixmap(QtGui.QPixmap(iconPath))
+            self.icon_L.setScaledContents(True)
+            self.icon_L.setObjectName("icon_L")
+
+            self.date_L = QtGui.QLabel(self.widget)
+            self.date_L.setGeometry(QtCore.QRect(self.textPosX, self.textPosY, 341, 16))
+            self.date_L.setObjectName("date_L")
+            self.scene_L = QtGui.QLabel(self.widget)
+            self.scene_L.setGeometry(QtCore.QRect(self.textPosX, self.textPosY - 15, 341, 16))
+            
+            date = self.getDateModified(self.sceneRootPath + "/" + t)
+            self.date_L.setText(date)
+            
+            font = QtGui.QFont()
+            font.setFamily("Verdana")
+            font.setPointSize(self.fontSize)
+            font.setWeight(75)
+            font.setBold(True)
+            self.scene_L.setFont(font)
+            self.scene_L.setFrameShape(QtGui.QFrame.NoFrame)
+            self.scene_L.setFrameShadow(QtGui.QFrame.Plain)
+            self.scene_L.setObjectName("scene_L")
+            
+            self.scene_L.setText(t)
+
+            self.tw_mayaScene.setCellWidget(rowCount,0,self.widget)
+            
+            rowCount = rowCount + 1
+                
+    def getLatestIcon(self,t,iconPath):
+        
+        newIconPath = ""
+        
+        if os.path.isdir(iconPath):
+            tmpList = os.listdir(iconPath)
+            mayaName = t.split(".")[0]
+            for icon in tmpList:
+                stripName = string.rsplit(icon,"_",1)[0]
+                if mayaName == stripName:
+                    newIconPath = iconPath + "/" + icon
+        else:
+            pass
+                
+        if newIconPath == "":
+            return mayaTmpIcon
+        else:
+            return newIconPath
+    
+    def getDateModified(self,mayaScene):
+        date = "%s" % time.ctime(os.path.getmtime(mayaScene))
+        return date
 
     def getMA(self,tmpList):
         newList = []
@@ -310,19 +444,38 @@ class Window(base_class, form_class):
                     newList.append(t)
         return newList
 
+    ''''__________________________________'''
+    
+    def saveAs(self):
+        print "save file as"
+        dsSaveScene.dsSS()
+        self.init_scene()
+        dsMDT.sceneCheck()
+    
+    def checkScene(self,path):
+        sceneList = []
+        tmpList = os.listdir(path)
+        for t in tmpList:
+            if str(t) != ".mayaSwatches":
+                if re.search(".ma",t) or re.search(".mb",t):
+                    sceneList.append(t)
+
+        return sceneList    
+
     def createEmptyFrom(self,menu,item):
 
         tk = self.task_CB.currentText()
-        sq = self.sequence_CB.currentText()
-        selectedItem = self.scene_LW.currentItem()
+        selectedRow = self.tw_mayaScene.currentRow()
+        selectedColumn = self.tw_mayaScene.currentColumn()
+
+        selectedItem = self.tw_mayaScene.verticalHeaderItem(selectedRow)
 
         ext = item[-3:]
-        #ext = selectedItem.text()[-3:]
         
-        destFile = self.taskRootPath + tk + "/" + sq + "_" + tk + ext
+        destFile = self.taskRootPath + tk + "/" + self.sq + "_" + tk + ext
         templateFile = self.taskRootPath +menu.title() + "/" + item
             
-        if selectedItem != None:
+        if selectedItem is not None:
             ext = selectedItem.text()[-3:]
             fileName = selectedItem.text().replace(ext,"")
         else:
@@ -377,9 +530,12 @@ class Window(base_class, form_class):
     
     def openScene(self):
         self.init_vars()
-        selectedItem = self.scene_LW.currentItem()
-        print selectedItem.text()
-        if selectedItem.text()[0] != "-":
+        selectedRow = self.tw_mayaScene.currentRow()
+        selectedColumn = self.tw_mayaScene.currentColumn()
+
+        selectedItem = self.tw_mayaScene.verticalHeaderItem(selectedRow)
+
+        if selectedItem.text()[0] is not "-":
             if self.tk == "all":
                 for task in self.taskList:
                     if re.search(task,selectedItem.text()):
@@ -390,27 +546,26 @@ class Window(base_class, form_class):
                 mayaScene = self.taskRootPath + self.tk + "/" + selectedItem.text()
                 
             if self.version_RB.isChecked():
-                tmpSplit = selectedItem.text().split("_")
-                ext = selectedItem.text()[-3:]
-                heroScene = tmpSplit[0] + "_" + tmpSplit[1] + ext
+                ext = selectedItem.text().split(".")[-1]
+                user = selectedItem.text().split("_")[-1]
+                version = selectedItem.text().split("_")[-2]
+                
+                heroScene = selectedItem.text().replace("_" + version + "_" + user,"."+ext)
+                
                 mayaScene = self.taskRootPath + self.tk + "/version/" + heroScene +"/"+ selectedItem.text()
-    
+                
+                
+            if self.data_RB.isChecked():
+                mayaScene = self.taskRootPath + "/data/export/"+ selectedItem.text()
+                
             if dsOsUtil.mayaRunning() == True:
                 if cmds.file(q=True, anyModified=True) == True:
                     self.saveConfirmDialog(mayaScene)
                 else:
                     cmds.file( str(mayaScene), o=True )
             else:
-                os.environ['PYTHONPATH']="//vfx-data-server/dsGlobal/dsCore\maya;//vfx-data-server/dsGlobal/globalMaya/Resources/PyQt_Win64;//vfx-data-server/dsGlobal/globalResources/Shotgun;//vfx-data-server/dsGlobal/dsCore/shotgun"
-                os.environ['MAYA_SCRIPT_PATH'] = "//vfx-data-server/dsGlobal/globalMaya/Mel"
-                os.environ['MAYA_ICON_PATH'] = "//vfx-data-server/dsGlobal/globalMaya/Icons"
-                os.environ['MAYA_SHELF_PATH'] = "//vfx-data-server/dsGlobal/globalMaya/shelves"
-                os.environ['MAYA_MODULE_PATH'] = "//vfx-data-server/dsGlobal/globalMaya/modules/windows/2013/"
-                os.environ['YETI_INTERACTIVE_LICENSE'] = "1"
-                os.environ['RLM_LICENSE '] = "49534@xserv2.duckling.dk"
-                
                 print "open new Maya with Scene " + mayaScene
-                cmd = '"C:/Program Files/Autodesk/Maya2013/bin/maya.exe\" -file ' + str(mayaScene)
+                cmd = '"C:/Program Files/Autodesk/Maya2014/bin/maya.exe\" -file ' + str(mayaScene)
                 if sys.platform == "linux2":
                     self.process(cmd)
                 else:
@@ -421,11 +576,19 @@ class Window(base_class, form_class):
             dsMDT.sceneCheck()
         except:
             pass
-            
+
+    def exportScene(self):
+        self.init_vars()
+        dsSaveScene.dsSS()
+        self.init_scene()
+        
     def importScene(self):
         self.init_vars()
         
-        selectedItem = self.scene_LW.currentItem()
+        selectedRow = self.tw_mayaScene.currentRow()
+        selectedColumn = self.tw_mayaScene.currentColumn()
+
+        selectedItem = self.tw_mayaScene.verticalHeaderItem(selectedRow)
         
         if self.tk == "all":
             for task in self.taskList:
@@ -438,11 +601,15 @@ class Window(base_class, form_class):
         if dsOsUtil.mayaRunning() == True:
             print "import " +  mayaScene
             cmds.file(str(mayaScene), i=True)
+        self.init_scene()
         
     def retireScene(self):
         self.init_vars()
 
-        selectedItem = self.scene_LW.currentItem()
+        selectedRow = self.tw_mayaScene.currentRow()
+        selectedColumn = self.tw_mayaScene.currentColumn()
+
+        selectedItem = self.tw_mayaScene.verticalHeaderItem(selectedRow)
         
         if self.tk == "all":
             for task in self.taskList:
@@ -465,7 +632,10 @@ class Window(base_class, form_class):
     def explorerOpen(self):
         self.init_vars()
         
-        selectedItem = self.scene_LW.currentItem()
+        selectedRow = self.tw_mayaScene.currentRow()
+        selectedColumn = self.tw_mayaScene.currentColumn()
+
+        selectedItem = self.tw_mayaScene.verticalHeaderItem(selectedRow)
             
         if selectedItem is not "":
             path = self.taskRootPath + self.tk + "/"
@@ -474,13 +644,19 @@ class Window(base_class, form_class):
             
         if self.tk == "all":
             path = self.taskRootPath
-            
-        dsOsUtil.openInBrowser(path)
-    
+
+        path = path.replace("/","\\")
+        cmd = "explorer %s" % (path)
+        self.process(str(cmd))
+        self.init_scene()
+        
     def refScene(self):
         self.init_vars()
 
-        selectedItem = self.scene_LW.currentItem()
+        selectedRow = self.tw_mayaScene.currentRow()
+        selectedColumn = self.tw_mayaScene.currentColumn()
+
+        selectedItem = self.tw_mayaScene.verticalHeaderItem(selectedRow)
         
         if self.tk == "all":
             for task in self.taskList:
@@ -494,11 +670,15 @@ class Window(base_class, form_class):
         if dsOsUtil.mayaRunning() == True:
             print "Ref " +mayaScene
             cmds.file(str(mayaScene), r=True, namespace=str(nsName), options="v=0", shd="shadingNetworks")
-
+        self.init_scene()
+        
     def versionAction(self):
         self.init_vars()
         
-        selectedItem = self.scene_LW.currentItem()
+        selectedRow = self.tw_mayaScene.currentRow()
+        selectedColumn = self.tw_mayaScene.currentColumn()
+
+        selectedItem = self.tw_mayaScene.verticalHeaderItem(selectedRow)
         
         if selectedItem is not None:
             
@@ -515,7 +695,7 @@ class Window(base_class, form_class):
     
     
             if dsOsUtil.mayaRunning() == True:
-                if str(mayaScene) ==str(cmds.file(q=True,sn=True)):
+                if str(mayaScene) == str(cmds.file(q=True,sn=True)):
                     dsVersionUp.dsVersionUp()
                 else:
                     nn = QtGui.QInputDialog.getText(self, 'Input Dialog', 'Add Descrition:')
@@ -604,11 +784,15 @@ class Window(base_class, form_class):
                 shutil.copy(filePath,versionPath + "/" + self.version_file_name)
                 print "versioned UP"
                 self.filePermissions(versionPath + "/" + self.version_file_name)
-         
+        self.init_scene()
+        
     def VersionToHero(self):
         print "versionToHero"
         self.init_vars()
-        selectedItem = self.scene_LW.currentItem()
+        selectedRow = self.tw_mayaScene.currentRow()
+        selectedColumn = self.tw_mayaScene.currentColumn()
+
+        selectedItem = self.tw_mayaScene.verticalHeaderItem(selectedRow)
         ext = selectedItem.text()[-3:]
         
         fileSplit = selectedItem.text().split("_")
@@ -679,6 +863,7 @@ class Window(base_class, form_class):
         
             shutil.copy(versionFilePath,heroFilePath)
             self.filePermissions(heroFilePath)
+        self.init_scene()
          
     def checkLocalVersion(self,filePath,pathDict):
         tmpList = []
@@ -764,6 +949,7 @@ class Window(base_class, form_class):
                 shutil.copy(self.emptyMA,heroFilePath)
         else:
             print ""
+            
         self.init_scene()
 
     def notateScene(self):
@@ -775,7 +961,10 @@ class Window(base_class, form_class):
     
             if str(nn[0]) != "":
 
-                selectedItem = self.scene_LW.currentItem()
+                selectedRow = self.tw_mayaScene.currentRow()
+                selectedColumn = self.tw_mayaScene.currentColumn()
+        
+                selectedItem = self.tw_mayaScene.verticalHeaderItem(selectedRow)
     
                 templateFile = str(self.taskRootPath + self.tk + "/" + selectedItem.text())
                 ext = templateFile[-3:]
@@ -811,7 +1000,8 @@ class Window(base_class, form_class):
                     print "Notated " + destFile
                     shutil.copy(templateFile,destFile)
                     self.init_scene()
-
+        self.init_scene()
+        
     def saveConfirmDialog(self, item):
         reply = QtGui.QMessageBox.question(self, 'Message', "Want to to Save, before closing?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         
@@ -841,7 +1031,10 @@ class Window(base_class, form_class):
         self.save_config()
 
         tk = self.task_CB.currentText()
-        selectedItem = self.scene_LW.currentItem()
+        selectedRow = self.tw_mayaScene.currentRow()
+        selectedColumn = self.tw_mayaScene.currentColumn()
+
+        selectedItem = self.tw_mayaScene.verticalHeaderItem(selectedRow)
 
         menu = QtGui.QMenu()
         createMenu = QtGui.QMenu("CreateFromTask")
@@ -857,7 +1050,7 @@ class Window(base_class, form_class):
         """ Menu creation"""
         menu.addMenu(mainMenu)
 
-        if self.hero_RB.isChecked():
+        if self.hero_RB.isChecked() or self.data_RB.isChecked():
             if not selectedItem is None:
                 openTask = mainMenu.addAction("open")
                 self.connect(openTask,QtCore.SIGNAL('triggered()'), lambda item=selectedItem: self.openScene())
@@ -923,26 +1116,18 @@ class Window(base_class, form_class):
                 
             menu.exec_(QtGui.QCursor.pos())
 
+    ''''__________________________________'''
+            
     def closeEvent(self,event):
         self.save_config()
 
     def loadTaskconfig(self):
         '''
         Load config which is a dictionary and applying setting.
-        '''
-        if os.path.exists(self.config_path):
-            config_file = open( '%s' % self.config_path, 'r')
-            list = config_file.readlines()
-            config_file.close()
-
-            config = {}
-            for option in list:
-                key, value = option.split('=')
-                config[key] = value.strip()
-            
-            for i in range(self.task_CB.count()):
-                if str(self.task_CB.itemText(i)) == str(config.get('TASK')):
-                    self.task_CB.setCurrentIndex(i)
+        ''' 
+        for i in range(self.task_CB.count()):
+            if str(self.task_CB.itemText(i)) == str(self.tkname):
+                self.task_CB.setCurrentIndex(i)
                 
     def load_config(self):
         '''
@@ -961,16 +1146,16 @@ class Window(base_class, form_class):
             try:
                 index = [i for i in range(self.user_CB.count()) if self.user_CB.itemText(i) == config.get('USER')][0]
                 self.user_CB.setCurrentIndex(index)
-
+    
                 index = [i for i in range(self.projects_CB.count()) if self.projects_CB.itemText(i) == config.get('PROJECT')][0]
                 self.projects_CB.setCurrentIndex(index)
-
+    
                 index = [i for i in range(self.episodes_CB.count()) if self.episodes_CB.itemText(i) == config.get('EPISODE')][0]
                 self.episodes_CB.setCurrentIndex(index)
-
+    
                 index = [i for i in range(self.sequence_CB.count()) if self.sequence_CB.itemText(i) == config.get('SEQUENCE')][0]
                 self.sequence_CB.setCurrentIndex(index)
-
+    
                 index = [i for i in range(self.task_CB.count()) if self.task_CB.itemText(i) == config.get('TASK')][0]
                 self.task_CB.setCurrentIndex(index)
 
@@ -982,7 +1167,6 @@ class Window(base_class, form_class):
         '''
         Save setting to the config file as a dictionary.
         '''
-
         if not os.path.exists(self.config_dir):
             os.mkdir(self.config_dir)
 
@@ -1016,8 +1200,11 @@ class Window(base_class, form_class):
         return proc
 
 
-        
 def dsShotOpen():
-    global myWindow
-    myWindow = Window()
-    myWindow.show()
+    global dsShotOpenWindow
+    try:
+        dsShotOpenWindow.close()
+    except:
+        pass
+    dsShotOpenWindow = Window()
+    dsShotOpenWindow.show()

@@ -80,16 +80,14 @@ class legoReplace:
                     nName = removeLong.split('_')[0]
                     #print 'nName='+nName
                     filePath = libraryPath + nName + '/dev/maya/'
-                    #print filePath
                     #Print files in filePath
-                    for files in os.listdir(filePath):
+                    os.chdir(filePath)
+                    for files in os.listdir("."):
                         if files.endswith(".ma"):
                             filesRe = files.split("_") 
                             if filesRe[-1] == LODType:
-                                #print files
-                                nName = files
-                    filePath = filePath + nName
-                    #print filePath
+                                files = files
+                    filePath = filePath + files
                     if not os.path.exists(filePath):
                         print 'Not cleaned = ' + filePath
                         pass

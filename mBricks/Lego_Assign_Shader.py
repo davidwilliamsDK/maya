@@ -13,7 +13,7 @@ def main(materialID):
     return shader
     
 def readLegoSXML():
-    xml_file = os.path.abspath("/dsGlobal/dsCore/maya/mBricks/")
+    xml_file = os.path.abspath("//vfx-data-server/dsGlobal/dsCore/maya/mBricks/")
     xml_file = os.path.dirname(xml_file+"/")
     xml_file = os.path.join(xml_file, "legoS.xml")
     #Read the xml
@@ -21,11 +21,10 @@ def readLegoSXML():
         tree = ET.parse(xml_file)
     except Exception, inst:
         print "Unexpected error opening %s: %s" % (xml_file, inst)
-        return    
+        return
     #Root is the whole xml
     root = tree.getroot()
     return root
-    
 def searchRGBLegoSXML(root,materialID):
     ### Serch xml for ID get RGB
     RGB = "0,0,0"

@@ -10,25 +10,15 @@ def spSG(cmd):
     clearTmp("sgUpdate")
     
     val = random.randint(0,5000000)
-    if sys.platform == 'linux2':
-        tmpPath = "/tmp"
-        if not os.path.isdir(tmpPath):os.mkdir(tmpPath)
-        path =  tmpPath + "/sgUpdate_" + str(val) +  ".py"
-        bFile = open(path, 'w')
-        bFile.write("import sys\nsys.path.append(r'/dsGlobal/dsCore/shotgun')\nimport sgTools\n" + str(cmd) + "\nraw_input(\"Press Enter to continue...\")")
-    else:
-        tmpPath = "C:/temp"
-        if not os.path.isdir(tmpPath):os.mkdir(tmpPath)
-        path =  tmpPath + "/sgUpdate_" + str(val) +  ".py"
-        bFile = open(path, 'w')
-        bFile.write("import sys\nsys.path.append('//vfx-data-server/dsGlobal/dsCore/shotgun')\nimport sgTools\n" + str(cmd) + "\nraw_input(\"Press Enter to continue...\")")
+    tmpPath = "C:/temp"
+    if not os.path.isdir(tmpPath):os.mkdir(tmpPath)
+    path =  tmpPath + "/sgUpdate_" + str(val) +  ".py"
+    bFile = open(path, 'w')
+    bFile.write("import sys\nsys.path.append('//vfx-data-server/dsGlobal/dsCore/shotgun')\nimport sgTools\ntry:\n\t" + str(cmd) + "\nexcept:\n\traw_input(\"Press Enter to continue...\")")
     bFile.close()
     cmd = "python "+ path
     
-    if sys.platform == "linux2":
-        self.process(cmd)
-    else:
-        subprocess.Popen(cmd, creationflags = subprocess.CREATE_NEW_CONSOLE)
+    subprocess.Popen(cmd, creationflags = subprocess.CREATE_NEW_CONSOLE)
 
 def spCOPY(cmd):
     clearTmp("COPY")

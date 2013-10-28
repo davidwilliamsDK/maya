@@ -675,7 +675,6 @@ class MyForm(QtGui.QMainWindow):
         MyForm.assetListUpdate(self)
         self.ui.statusbar.showMessage("Asset created:  " + assetName)
 
-        print film
         list = [["Asset", "sg_asset_type", assetType],["Asset", "sg_subtype", assetSubType]]
         sgBridge.addTypesToList(list)
         assetID = sgBridge.sgCreateAsset(project, assetName, assetType, assetSubType)
