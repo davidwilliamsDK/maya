@@ -1,4 +1,3 @@
-
 #import maya.cmds as cmds
 #import maya.mel as mel
 
@@ -11,6 +10,35 @@
         #y = y + 1
         
 #sRenderLocal(140,150)
+
+
+
+import maya.cmds as cmds
+import maya.mel as mel
+
+
+def renderLocal(start,end):
+
+        y = start
+        x = end
+        amount = int(end) - int(start)
+        per = 100 / amount
+        cmds.progressWindow( title='local Rendering', progress=int(0), status='Rendering: 0%', isInterruptable=True )
+
+        while y <= x:
+                if cmds.progressWindow( query=True, isCancelled=True ) :
+                        break
+                cmds.currentTime(y)
+                mel.eval('renderWindowRender redoPreviousRender renderView;')
+                cmds.progressWindow( edit=True, progress=int(per), status=('Rendering: ' + `per` + '%' ) )
+                y = y + 1
+                per = per + per
+
+        cmds.progressWindow(endProgress=1)
+        
+        
+        
+
 
 import maya.cmds as cmds
 import re
